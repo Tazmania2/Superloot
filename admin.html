@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superloot - Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Glancyr&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/css/styles.css">
+    <link rel="stylesheet" href="src/css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <div class="logo">
+                <img src="https://i.ibb.co/hxhr7r6k/Color.png" alt="Superloot Logo">
+            </div>
+            <h1>Painel Administrativo</h1>
+            <button class="admin-button publish" id="publish-btn">
+                <i class="ti ti-upload"></i>
+                Publicar Alterações
+            </button>
+        </header>
+
+        <main class="admin-main">
+            <section class="admin-section">
+                <h2>Categorias</h2>
+                <div class="admin-actions">
+                    <button class="admin-button" id="add-category-btn">
+                        <i class="ti ti-plus"></i>
+                        Nova Categoria
+                    </button>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table" id="categories-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Ícone</th>
+                                <th>Descrição</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categories-list">
+                            <!-- Categories will be dynamically added here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="admin-section">
+                <h2>Produtos</h2>
+                <div class="admin-actions">
+                    <button class="admin-button" id="add-product-btn">
+                        <i class="ti ti-plus"></i>
+                        Novo Produto
+                    </button>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table" id="products-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Preço</th>
+                                <th>Imagem</th>
+                                <th>Destaque</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-list">
+                            <!-- Products will be dynamically added here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Category Modal -->
+    <div class="modal" id="category-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="category-modal-title">Nova Categoria</h3>
+                <button class="modal-close" id="close-category-modal">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+            <form id="category-form">
+                <div class="form-group">
+                    <label for="category-id">ID</label>
+                    <input type="text" id="category-id" name="id" required>
+                </div>
+                <div class="form-group">
+                    <label for="category-name">Nome</label>
+                    <input type="text" id="category-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="category-icon">URL do Ícone</label>
+                    <input type="text" id="category-icon" name="icon" required>
+                </div>
+                <div class="form-group">
+                    <label for="category-description">Descrição</label>
+                    <textarea id="category-description" name="description" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="admin-button secondary" id="cancel-category">Cancelar</button>
+                    <button type="submit" class="admin-button primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div class="modal" id="product-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="product-modal-title">Novo Produto</h3>
+                <button class="modal-close" id="close-product-modal">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+            <form id="product-form">
+                <div class="form-group">
+                    <label for="product-id">ID</label>
+                    <input type="text" id="product-id" name="id" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-name">Nome</label>
+                    <input type="text" id="product-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-category">Categoria</label>
+                    <select id="product-category" name="category" required>
+                        <!-- Categories will be dynamically added here -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="product-price">Preço</label>
+                    <input type="number" id="product-price" name="price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-image">URL da Imagem</label>
+                    <input type="text" id="product-image" name="image" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-description">Descrição</label>
+                    <textarea id="product-description" name="description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="product-buy-link">Link de Compra (WhatsApp)</label>
+                    <input type="text" id="product-buy-link" name="buyLink" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-discord-link">Link do Discord</label>
+                    <input type="text" id="product-discord-link" name="discordLink" required>
+                </div>
+                <div class="form-group checkbox">
+                    <input type="checkbox" id="product-highlight" name="highlight">
+                    <label for="product-highlight">Destacar produto</label>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="admin-button secondary" id="cancel-product">Cancelar</button>
+                    <button type="submit" class="admin-button primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="src/js/main.js"></script>
+    <script src="src/js/admin.js"></script>
+</body>
+</html> 

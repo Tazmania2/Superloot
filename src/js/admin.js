@@ -1,0 +1,344 @@
+// Admin functionality
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Admin page loaded');
+
+    // Try to load data from localStorage first, if not available use productsData
+    let localData = localStorage.getItem('superLootData');
+    if (localData) {
+        try {
+            productsData = JSON.parse(localData);
+            console.log('Loaded data from localStorage');
+        } catch (e) {
+            console.error('Error loading from localStorage:', e);
+            localStorage.removeItem('superLootData');
+        }
+    }
+    
+    console.log('Products Data:', productsData);
+
+    // DOM Elements
+    const categoriesList = document.getElementById('categories-list');
+    const productsList = document.getElementById('products-list');
+    const categoryModal = document.getElementById('category-modal');
+    const productModal = document.getElementById('product-modal');
+    const categoryForm = document.getElementById('category-form');
+    const productForm = document.getElementById('product-form');
+    const productCategorySelect = document.getElementById('product-category');
+    const publishBtn = document.getElementById('publish-btn');
+
+    console.log('DOM Elements:', {
+        categoriesList,
+        productsList,
+        categoryModal,
+        productModal,
+        categoryForm,
+        productForm,
+        productCategorySelect
+    });
+
+    // Buttons
+    const addCategoryBtn = document.getElementById('add-category-btn');
+    const addProductBtn = document.getElementById('add-product-btn');
+    const closeCategoryModal = document.getElementById('close-category-modal');
+    const closeProductModal = document.getElementById('close-product-modal');
+    const cancelCategory = document.getElementById('cancel-category');
+    const cancelProduct = document.getElementById('cancel-product');
+
+    // Modal titles
+    const categoryModalTitle = document.getElementById('category-modal-title');
+    const productModalTitle = document.getElementById('product-modal-title');
+
+    // Current editing items
+    let currentEditingCategory = null;
+    let currentEditingProduct = null;
+
+    // Load initial data
+    loadCategories();
+    loadProducts();
+
+    // Event Listeners
+    addCategoryBtn.addEventListener('click', () => openCategoryModal());
+    addProductBtn.addEventListener('click', () => openProductModal());
+    closeCategoryModal.addEventListener('click', () => closeModal(categoryModal));
+    closeProductModal.addEventListener('click', () => closeModal(productModal));
+    cancelCategory.addEventListener('click', () => closeModal(categoryModal));
+    cancelProduct.addEventListener('click', () => closeModal(productModal));
+    publishBtn.addEventListener('click', publishChanges);
+
+    // Category Form Submit
+    categoryForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(categoryForm);
+        const categoryData = Object.fromEntries(formData.entries());
+
+        if (currentEditingCategory) {
+            updateCategory(currentEditingCategory, categoryData);
+        } else {
+            addCategory(categoryData);
+        }
+
+        closeModal(categoryModal);
+    });
+
+    // Product Form Submit
+    productForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(productForm);
+        const productData = Object.fromEntries(formData.entries());
+        
+        // Convert price to number and get highlight status
+        productData.price = parseFloat(productData.price);
+        productData.highlight = document.getElementById('product-highlight').checked;
+
+        if (currentEditingProduct) {
+            updateProduct(currentEditingProduct, productData);
+        } else {
+            addProduct(productData);
+        }
+
+        closeModal(productModal);
+    });
+
+    // Function to save data to localStorage
+    function saveToLocalStorage() {
+        try {
+            localStorage.setItem('superLootData', JSON.stringify(productsData));
+            console.log('Saved to localStorage');
+        } catch (e) {
+            console.error('Error saving to localStorage:', e);
+        }
+    }
+
+    // Add reset button to header
+    const resetBtn = document.createElement('button');
+    resetBtn.className = 'admin-button reset';
+    resetBtn.innerHTML = '<i class="ti ti-refresh"></i> Resetar Alterações';
+    resetBtn.style.marginLeft = '1rem';
+    resetBtn.onclick = function() {
+        if (confirm('Tem certeza que deseja descartar todas as alterações não publicadas?')) {
+            localStorage.removeItem('superLootData');
+            location.reload();
+        }
+    };
+    publishBtn.parentNode.insertBefore(resetBtn, publishBtn.nextSibling);
+
+    // Functions
+    function loadCategories() {
+        categoriesList.innerHTML = '';
+        productsData.categories.forEach(category => {
+            const row = createCategoryRow(category);
+            categoriesList.appendChild(row);
+        });
+        updateProductCategorySelect();
+    }
+
+    function loadProducts() {
+        productsList.innerHTML = '';
+        productsData.products.forEach(product => {
+            const row = createProductRow(product);
+            productsList.appendChild(row);
+        });
+    }
+
+    function createCategoryRow(category) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${category.id}</td>
+            <td>${category.name}</td>
+            <td><img src="${category.icon}" alt="${category.name}" style="width: 24px; height: 24px;"></td>
+            <td>${category.description}</td>
+            <td>
+                <div class="action-buttons">
+                    <button class="action-button edit" onclick="editCategory('${category.id}')">
+                        <i class="ti ti-edit"></i>
+                    </button>
+                    <button class="action-button delete" onclick="deleteCategory('${category.id}')">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        return row;
+    }
+
+    function createProductRow(product) {
+        const category = productsData.categories.find(c => c.id === product.category);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${product.id}</td>
+            <td>${product.name}</td>
+            <td>${category ? category.name : 'N/A'}</td>
+            <td>R$ ${product.price.toFixed(2)}</td>
+            <td><img src="${product.image}" alt="${product.name}" style="width: 24px; height: 24px;"></td>
+            <td>
+                <label class="toggle-switch">
+                    <input type="checkbox" ${product.highlight ? 'checked' : ''} 
+                           onchange="toggleHighlight('${product.id}', this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
+            </td>
+            <td>
+                <div class="action-buttons">
+                    <button class="action-button edit" onclick="editProduct('${product.id}')">
+                        <i class="ti ti-edit"></i>
+                    </button>
+                    <button class="action-button delete" onclick="deleteProduct('${product.id}')">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        return row;
+    }
+
+    function updateProductCategorySelect() {
+        productCategorySelect.innerHTML = '';
+        productsData.categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            productCategorySelect.appendChild(option);
+        });
+    }
+
+    function openCategoryModal(category = null) {
+        currentEditingCategory = category;
+        categoryModalTitle.textContent = category ? 'Editar Categoria' : 'Nova Categoria';
+        
+        if (category) {
+            document.getElementById('category-id').value = category.id;
+            document.getElementById('category-name').value = category.name;
+            document.getElementById('category-icon').value = category.icon;
+            document.getElementById('category-description').value = category.description;
+        } else {
+            categoryForm.reset();
+        }
+
+        categoryModal.classList.add('active');
+    }
+
+    function openProductModal(product = null) {
+        currentEditingProduct = product;
+        productModalTitle.textContent = product ? 'Editar Produto' : 'Novo Produto';
+        
+        if (product) {
+            document.getElementById('product-id').value = product.id;
+            document.getElementById('product-name').value = product.name;
+            document.getElementById('product-category').value = product.category;
+            document.getElementById('product-price').value = product.price;
+            document.getElementById('product-image').value = product.image;
+            document.getElementById('product-description').value = product.description;
+            document.getElementById('product-buy-link').value = product.buyLink;
+            document.getElementById('product-discord-link').value = product.discordLink;
+            document.getElementById('product-highlight').checked = product.highlight;
+        } else {
+            productForm.reset();
+        }
+
+        productModal.classList.add('active');
+    }
+
+    function closeModal(modal) {
+        modal.classList.remove('active');
+        currentEditingCategory = null;
+        currentEditingProduct = null;
+    }
+
+    function addCategory(categoryData) {
+        productsData.categories.push(categoryData);
+        loadCategories();
+        saveToLocalStorage();
+    }
+
+    function updateCategory(categoryId, categoryData) {
+        const index = productsData.categories.findIndex(c => c.id === categoryId);
+        if (index !== -1) {
+            productsData.categories[index] = categoryData;
+            loadCategories();
+            saveToLocalStorage();
+        }
+    }
+
+    function deleteCategory(categoryId) {
+        if (confirm('Tem certeza que deseja excluir esta categoria?')) {
+            productsData.categories = productsData.categories.filter(c => c.id !== categoryId);
+            loadCategories();
+            saveToLocalStorage();
+        }
+    }
+
+    function addProduct(productData) {
+        productsData.products.push(productData);
+        loadProducts();
+        saveToLocalStorage();
+    }
+
+    function updateProduct(productId, productData) {
+        const index = productsData.products.findIndex(p => p.id === productId);
+        if (index !== -1) {
+            productsData.products[index] = productData;
+            loadProducts();
+            saveToLocalStorage();
+        }
+    }
+
+    function deleteProduct(productId) {
+        if (confirm('Tem certeza que deseja excluir este produto?')) {
+            productsData.products = productsData.products.filter(p => p.id !== productId);
+            loadProducts();
+            saveToLocalStorage();
+        }
+    }
+
+    function toggleHighlight(productId, isHighlighted) {
+        const product = productsData.products.find(p => p.id === productId);
+        if (product) {
+            product.highlight = isHighlighted;
+            loadProducts();
+            saveToLocalStorage();
+        }
+    }
+
+    // Make functions available globally
+    window.editCategory = (categoryId) => {
+        const category = productsData.categories.find(c => c.id === categoryId);
+        if (category) {
+            openCategoryModal(category);
+        }
+    };
+
+    window.deleteCategory = deleteCategory;
+    window.editProduct = (productId) => {
+        const product = productsData.products.find(p => p.id === productId);
+        if (product) {
+            openProductModal(product);
+        }
+    };
+    window.deleteProduct = deleteProduct;
+    window.toggleHighlight = toggleHighlight;
+    window.publishChanges = publishChanges;
+
+    function publishChanges() {
+        // Create a blob with the updated JSON data
+        const jsonData = JSON.stringify(productsData, null, 2);
+        const blob = new Blob([jsonData], { type: 'application/json' });
+        
+        // Create a download link
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'products.json';
+        
+        // Add the link to the document, click it, and remove it
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        // Show success message
+        alert('Arquivo JSON gerado com sucesso! Faça o upload do arquivo para o servidor para aplicar as alterações.');
+    }
+
+    // Make publish function available globally
+    window.publishChanges = publishChanges;
+}); 

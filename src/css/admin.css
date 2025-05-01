@@ -1,0 +1,261 @@
+/* Admin Container */
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Admin Header */
+.admin-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.admin-header .logo {
+    width: 50px;
+    height: 50px;
+}
+
+.admin-header .logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Admin Main */
+.admin-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Admin Section */
+.admin-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.admin-section h2 {
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+/* Admin Actions */
+.admin-actions {
+    margin-bottom: 1rem;
+}
+
+.admin-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: none;
+    background: #7c3aed;
+    color: #fff;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.admin-button:hover {
+    background: #6d28d9;
+}
+
+.admin-button.secondary {
+    background: #4b5563;
+}
+
+.admin-button.secondary:hover {
+    background: #374151;
+}
+
+.admin-button.publish {
+    background: #10b981;
+    margin-left: auto;
+}
+
+.admin-button.publish:hover {
+    background: #059669;
+}
+
+.admin-button.reset {
+    background: #6b7280;
+}
+
+.admin-button.reset:hover {
+    background: #4b5563;
+}
+
+/* Admin Table */
+.admin-table-container {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 1rem;
+    text-align: left;
+    color: #fff;
+}
+
+.admin-table th {
+    background: rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+}
+
+.admin-table tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.admin-table tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #1f2937;
+    border-radius: 12px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-header h3 {
+    color: #fff;
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+/* Form */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #4b5563;
+    background: #374151;
+    color: #fff;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-group.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group.checkbox input {
+    width: auto;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-button {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.action-button.edit {
+    background: #3b82f6;
+}
+
+.action-button.edit:hover {
+    background: #2563eb;
+}
+
+.action-button.delete {
+    background: #ef4444;
+}
+
+.action-button.delete:hover {
+    background: #dc2626;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-container {
+        padding: 1rem;
+    }
+
+    .modal-content {
+        margin: 1rem;
+        padding: 1rem;
+    }
+} 

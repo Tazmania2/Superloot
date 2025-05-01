@@ -1,0 +1,79 @@
+{
+    "categories": [
+      {
+        "id": "poe2",
+        "name": "Path of Exile 2",
+        "icon": "https://i.ibb.co/R4JWdY79/console-8558862.png",
+        "description": "Compre currencies e itens para Path of Exile 2"
+      },
+      {
+        "id": "dofus",
+        "name": "Dofus",
+        "icon": "https://i.ibb.co/R4JWdY79/console-8558862.png",
+        "description": "Compre currencies e itens para Dofus"
+      },
+      {
+        "id": "rola",
+        "name": "Ragnarok LATAM",
+        "icon": "https://gamertogamer.com.br/wp-content/uploads/2025/04/RagnarokOnlineLatam-artwork-1024x576.jpg.webp",
+        "description": "Ragnarok Online Latin America"
+      }
+    ],
+    "products": [
+      {
+        "id": "mirror-of-kalandra",
+        "name": "Mirror of Kalandra",
+        "category": "poe2",
+        "price": 54.9,
+        "image": "https://i.ibb.co/xbDXHnb/game-coin-17879897.png",
+        "description": "O item mais raro e valioso do Path of Exile 2",
+        "buyLink": "https://wa.me/5511997387181?text=Quero%20comprar%20Mirror%20of%20Kalandra",
+        "highlight": false,
+        "discordLink": "https://discord.gg/uw7BbzMwHc"
+      },
+      {
+        "id": "divine-orb",
+        "name": "Divine Orb",
+        "category": "poe2",
+        "price": 29.9,
+        "image": "https://i.ibb.co/xbDXHnb/game-coin-17879897.png",
+        "description": "Re-roll os valores numéricos de um item raro",
+        "buyLink": "https://wa.me/5511997387181?text=Quero%20comprar%20Divine%20Orb",
+        "highlight": true,
+        "discordLink": "https://discord.gg/uw7BbzMwHc"
+      },
+      {
+        "id": "exalted-orb",
+        "name": "Exalted Orb",
+        "category": "poe2",
+        "price": 19.9,
+        "image": "https://i.ibb.co/xbDXHnb/game-coin-17879897.png",
+        "description": "Adiciona um novo mod aleatório a um item raro",
+        "buyLink": "https://wa.me/5511997387181?text=Quero%20comprar%20Exalted%20Orb",
+        "highlight": true,
+        "discordLink": "https://discord.gg/uw7BbzMwHc"
+      },
+      {
+        "id": "chaos-orb",
+        "name": "Chaos Orb",
+        "category": "poe2",
+        "price": 9.9,
+        "image": "https://i.ibb.co/xbDXHnb/game-coin-17879897.png",
+        "description": "Re-roll todos os mods de um item raro",
+        "buyLink": "https://wa.me/5511997387181?text=Quero%20comprar%20Chaos%20Orb",
+        "highlight": true,
+        "discordLink": "https://discord.gg/uw7BbzMwHc"
+      },
+      {
+        "id": "zenylatam",
+        "name": "Zeny",
+        "category": "rola",
+        "price": 125,
+        "image": "https://roexplorer.com/imgs/item_5033.jpg",
+        "description": "1kk de zeny\n1.000.000,00 Zeny em Ragnarok LATAM",
+        "buyLink": "https://wa.me/5511997387181?text=Quero%20comprar%1kk%20de%20Zeny",
+        "discordLink": "https://discord.gg/uw7BbzMwHc",
+        "highlight": true
+      }
+    ]
+  }
