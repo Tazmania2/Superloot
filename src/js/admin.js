@@ -6,24 +6,47 @@ document.addEventListener('DOMContentLoaded', async function() {
     let localData = localStorage.getItem('superLootData');
     if (localData) {
         try {
-            productsData = JSON.parse(localData);
-            console.log('Loaded data from localStorage');
+            const parsedData = JSON.parse(localData);
+            if (parsedData.categories && parsedData.products) {
+                productsData = parsedData;
+                console.log('Loaded data from localStorage');
+            } else {
+                throw new Error('Invalid data structure in localStorage');
+            }
         } catch (e) {
             console.error('Error loading from localStorage:', e);
             localStorage.removeItem('superLootData');
         }
-    } else {
-        // Try to load from JSON file
+    }
+
+    // If no valid localStorage data, try to load from JSON file
+    if (!productsData.categories || !productsData.products) {
         try {
-            const response = await fetch('/src/data/products.json');
-            if (response.ok) {
-                productsData = await response.json();
+            const response = await fetch('src/data/products.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const jsonData = await response.json();
+            
+            // Validate the JSON structure
+            if (jsonData.categories && jsonData.products) {
+                productsData = jsonData;
                 console.log('Loaded data from JSON file');
                 // Save to localStorage for offline editing
                 localStorage.setItem('superLootData', JSON.stringify(productsData));
+            } else {
+                throw new Error('Invalid JSON structure: missing categories or products');
             }
         } catch (e) {
             console.error('Error loading from JSON file:', e);
+            // Show error message
+            const errorContainer = document.createElement('div');
+            errorContainer.className = 'error-message';
+            errorContainer.innerHTML = `
+                <p>Erro ao carregar os dados: ${e.message}</p>
+                <p>Por favor, verifique se o arquivo products.json existe e tem a estrutura correta.</p>
+            `;
+            document.querySelector('.admin-container').prepend(errorContainer);
         }
     }
     
@@ -332,24 +355,29 @@ document.addEventListener('DOMContentLoaded', async function() {
     window.publishChanges = publishChanges;
 
     function publishChanges() {
-        // Create a blob with the updated JSON data
-        const jsonData = JSON.stringify(productsData, null, 2);
-        const blob = new Blob([jsonData], { type: 'application/json' });
-        
-        // Create a download link
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'products.json';
-        
-        // Add the link to the document, click it, and remove it
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        try {
+            // Create a blob with the updated JSON data
+            const jsonData = JSON.stringify(productsData, null, 2);
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            
+            // Create a download link
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'products.json';
+            
+            // Add the link to the document, click it, and remove it
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
 
-        // Show success message
-        alert('Arquivo JSON gerado com sucesso! Faça o upload do arquivo para o servidor para aplicar as alterações.');
+            // Show success message
+            alert('Arquivo JSON gerado com sucesso! Faça o upload do arquivo para o servidor para aplicar as alterações.');
+        } catch (error) {
+            console.error('Error publishing changes:', error);
+            alert('Erro ao gerar o arquivo JSON: ' + error.message);
+        }
     }
 
     // Add file upload functionality
