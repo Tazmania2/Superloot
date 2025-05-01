@@ -7,7 +7,7 @@ let productsData = {
 // Function to load products data
 async function loadProductsData() {
     try {
-        const response = await fetch('products.json');
+        const response = await fetch('/src/data/products.json');
         if (!response.ok) {
             throw new Error('Failed to load products data');
         }

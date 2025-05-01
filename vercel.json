@@ -1,0 +1,13 @@
+{
+    "version": 2,
+    "routes": [
+        {
+            "src": "/src/data/(.*)",
+            "dest": "/src/data/$1"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/$1"
+        }
+    ]
+} 
