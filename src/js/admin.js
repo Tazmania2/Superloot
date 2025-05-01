@@ -2,51 +2,49 @@
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('Admin page loaded');
 
-    // Try to load data from localStorage first, if not available use productsData
-    let localData = localStorage.getItem('superLootData');
-    if (localData) {
-        try {
-            const parsedData = JSON.parse(localData);
-            if (parsedData.categories && parsedData.products) {
-                productsData = parsedData;
-                console.log('Loaded data from localStorage');
-            } else {
-                throw new Error('Invalid data structure in localStorage');
-            }
-        } catch (e) {
-            console.error('Error loading from localStorage:', e);
-            localStorage.removeItem('superLootData');
+    // Try to load from JSON file first
+    try {
+        const response = await fetch('src/data/products.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    }
-
-    // If no valid localStorage data, try to load from JSON file
-    if (!productsData.categories || !productsData.products) {
-        try {
-            const response = await fetch('src/data/products.json');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+        const jsonData = await response.json();
+        
+        // Validate the JSON structure
+        if (jsonData.categories && jsonData.products) {
+            productsData = jsonData;
+            console.log('Loaded data from JSON file');
+            // Save to localStorage for offline editing
+            localStorage.setItem('superLootData', JSON.stringify(productsData));
+        } else {
+            throw new Error('Invalid JSON structure: missing categories or products');
+        }
+    } catch (e) {
+        console.error('Error loading from JSON file:', e);
+        
+        // If JSON file fails, try to load from localStorage as fallback
+        let localData = localStorage.getItem('superLootData');
+        if (localData) {
+            try {
+                const parsedData = JSON.parse(localData);
+                if (parsedData.categories && parsedData.products) {
+                    productsData = parsedData;
+                    console.log('Loaded data from localStorage as fallback');
+                } else {
+                    throw new Error('Invalid data structure in localStorage');
+                }
+            } catch (e) {
+                console.error('Error loading from localStorage:', e);
+                localStorage.removeItem('superLootData');
+                // Show error message
+                const errorContainer = document.createElement('div');
+                errorContainer.className = 'error-message';
+                errorContainer.innerHTML = `
+                    <p>Erro ao carregar os dados: ${e.message}</p>
+                    <p>Por favor, verifique se o arquivo products.json existe e tem a estrutura correta.</p>
+                `;
+                document.querySelector('.admin-container').prepend(errorContainer);
             }
-            const jsonData = await response.json();
-            
-            // Validate the JSON structure
-            if (jsonData.categories && jsonData.products) {
-                productsData = jsonData;
-                console.log('Loaded data from JSON file');
-                // Save to localStorage for offline editing
-                localStorage.setItem('superLootData', JSON.stringify(productsData));
-            } else {
-                throw new Error('Invalid JSON structure: missing categories or products');
-            }
-        } catch (e) {
-            console.error('Error loading from JSON file:', e);
-            // Show error message
-            const errorContainer = document.createElement('div');
-            errorContainer.className = 'error-message';
-            errorContainer.innerHTML = `
-                <p>Erro ao carregar os dados: ${e.message}</p>
-                <p>Por favor, verifique se o arquivo products.json existe e tem a estrutura correta.</p>
-            `;
-            document.querySelector('.admin-container').prepend(errorContainer);
         }
     }
     

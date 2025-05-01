@@ -7,25 +7,7 @@ let productsData = {
 // Function to load products data
 async function loadProductsData() {
     try {
-        // Try to load from localStorage first
-        const localData = localStorage.getItem('superLootData');
-        if (localData) {
-            try {
-                const parsedData = JSON.parse(localData);
-                if (parsedData.categories && parsedData.products) {
-                    productsData = parsedData;
-                    console.log('Loaded data from localStorage');
-                    createNavigation();
-                    initializePage();
-                    return;
-                }
-            } catch (e) {
-                console.error('Error parsing localStorage data:', e);
-                localStorage.removeItem('superLootData');
-            }
-        }
-
-        // If no valid localStorage data, try to load from JSON file
+        // Try to load from JSON file first
         const response = await fetch('src/data/products.json');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -46,21 +28,33 @@ async function loadProductsData() {
             
             createNavigation();
             initializePage();
+            return;
         } else {
             throw new Error('Invalid JSON structure: missing categories or products');
         }
-    } catch (error) {
-        console.error('Error loading products:', error);
-        // Show error message to user
-        const errorContainer = document.getElementById('error-message');
-        if (errorContainer) {
-            errorContainer.innerHTML = `
-                <div class="error-message">
-                    <p>Erro ao carregar os dados. Por favor, tente novamente mais tarde.</p>
-                    <p>Detalhes do erro: ${error.message}</p>
-                </div>
-            `;
+    } catch (e) {
+        console.error('Error loading from JSON file:', e);
+        
+        // If JSON file fails, try to load from localStorage as fallback
+        const localData = localStorage.getItem('superLootData');
+        if (localData) {
+            try {
+                const parsedData = JSON.parse(localData);
+                if (parsedData.categories && parsedData.products) {
+                    productsData = parsedData;
+                    console.log('Loaded data from localStorage as fallback');
+                    createNavigation();
+                    initializePage();
+                    return;
+                }
+            } catch (e) {
+                console.error('Error parsing localStorage data:', e);
+                localStorage.removeItem('superLootData');
+            }
         }
+        
+        // If both JSON and localStorage fail, show error
+        console.error('Failed to load products data from both JSON file and localStorage');
     }
 }
 
