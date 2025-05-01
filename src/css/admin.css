@@ -91,6 +91,14 @@
     background: #4b5563;
 }
 
+.admin-button.import {
+    background: #3b82f6;
+}
+
+.admin-button.import:hover {
+    background: #2563eb;
+}
+
 /* Admin Table */
 .admin-table-container {
     overflow-x: auto;

@@ -1,5 +1,5 @@
 // Admin functionality
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     console.log('Admin page loaded');
 
     // Try to load data from localStorage first, if not available use productsData
@@ -11,6 +11,19 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (e) {
             console.error('Error loading from localStorage:', e);
             localStorage.removeItem('superLootData');
+        }
+    } else {
+        // Try to load from JSON file
+        try {
+            const response = await fetch('/src/data/products.json');
+            if (response.ok) {
+                productsData = await response.json();
+                console.log('Loaded data from JSON file');
+                // Save to localStorage for offline editing
+                localStorage.setItem('superLootData', JSON.stringify(productsData));
+            }
+        } catch (e) {
+            console.error('Error loading from JSON file:', e);
         }
     }
     
@@ -339,6 +352,44 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('Arquivo JSON gerado com sucesso! Faça o upload do arquivo para o servidor para aplicar as alterações.');
     }
 
-    // Make publish function available globally
-    window.publishChanges = publishChanges;
+    // Add file upload functionality
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.json';
+    fileInput.style.display = 'none';
+    document.body.appendChild(fileInput);
+
+    const importBtn = document.createElement('button');
+    importBtn.className = 'admin-button import';
+    importBtn.innerHTML = '<i class="ti ti-file-import"></i> Importar JSON';
+    importBtn.style.marginLeft = '1rem';
+    importBtn.onclick = function() {
+        fileInput.click();
+    };
+    publishBtn.parentNode.insertBefore(importBtn, publishBtn);
+
+    fileInput.addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            try {
+                const text = await file.text();
+                const newData = JSON.parse(text);
+                
+                // Validate the JSON structure
+                if (newData.categories && newData.products) {
+                    if (confirm('Deseja importar este arquivo JSON? Isso substituirá todos os dados atuais.')) {
+                        productsData = newData;
+                        localStorage.setItem('superLootData', JSON.stringify(productsData));
+                        loadCategories();
+                        loadProducts();
+                        alert('Dados importados com sucesso!');
+                    }
+                } else {
+                    alert('O arquivo JSON não possui a estrutura correta. Deve conter "categories" e "products".');
+                }
+            } catch (error) {
+                alert('Erro ao ler o arquivo JSON: ' + error.message);
+            }
+        }
+    });
 }); 
