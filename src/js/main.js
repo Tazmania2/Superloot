@@ -7,29 +7,59 @@ let productsData = {
 // Function to load products data
 async function loadProductsData() {
     try {
-        const response = await fetch('/src/data/products.json');
-        if (!response.ok) {
-            throw new Error('Failed to load products data');
-        }
-        productsData = await response.json();
-        console.log('Products data loaded successfully');
-        
-        // After loading data, create navigation and initialize page
-        createNavigation();
-        initializePage();
-    } catch (error) {
-        console.error('Error loading products:', error);
-        // If loading fails, use localStorage data if available
+        // Try to load from localStorage first
         const localData = localStorage.getItem('superLootData');
         if (localData) {
             try {
-                productsData = JSON.parse(localData);
-                console.log('Loaded fallback data from localStorage');
-                createNavigation();
-                initializePage();
+                const parsedData = JSON.parse(localData);
+                if (parsedData.categories && parsedData.products) {
+                    productsData = parsedData;
+                    console.log('Loaded data from localStorage');
+                    createNavigation();
+                    initializePage();
+                    return;
+                }
             } catch (e) {
-                console.error('Error loading from localStorage:', e);
+                console.error('Error parsing localStorage data:', e);
+                localStorage.removeItem('superLootData');
             }
+        }
+
+        // If no valid localStorage data, try to load from JSON file
+        const response = await fetch('src/data/products.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const jsonData = await response.json();
+        
+        // Validate the JSON structure
+        if (jsonData.categories && jsonData.products) {
+            productsData = jsonData;
+            console.log('Products data loaded successfully from JSON file');
+            
+            // Save to localStorage for offline use
+            try {
+                localStorage.setItem('superLootData', JSON.stringify(productsData));
+            } catch (e) {
+                console.error('Error saving to localStorage:', e);
+            }
+            
+            createNavigation();
+            initializePage();
+        } else {
+            throw new Error('Invalid JSON structure: missing categories or products');
+        }
+    } catch (error) {
+        console.error('Error loading products:', error);
+        // Show error message to user
+        const errorContainer = document.getElementById('error-message');
+        if (errorContainer) {
+            errorContainer.innerHTML = `
+                <div class="error-message">
+                    <p>Erro ao carregar os dados. Por favor, tente novamente mais tarde.</p>
+                    <p>Detalhes do erro: ${error.message}</p>
+                </div>
+            `;
         }
     }
 }
