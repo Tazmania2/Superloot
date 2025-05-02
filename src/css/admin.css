@@ -294,17 +294,18 @@ input:checked + .toggle-slider:before {
 /* Drag and Drop Styles */
 .admin-table tr {
     transition: background-color 0.2s ease;
+    position: relative;
 }
 
 .admin-table.dragging-active tbody tr:not(.dragging) {
     cursor: move;
-    position: relative;
 }
 
 .admin-table tr.dragging {
     opacity: 0.5;
     background: rgba(124, 58, 237, 0.1);
     cursor: grabbing !important;
+    z-index: 1000;
 }
 
 .admin-table tr.drag-over-top {
@@ -320,6 +321,7 @@ input:checked + .toggle-slider:before {
     height: 2px;
     background: #7c3aed;
     pointer-events: none;
+    z-index: 1001;
 }
 
 .admin-table tr.drag-over-bottom {
@@ -335,6 +337,7 @@ input:checked + .toggle-slider:before {
     height: 2px;
     background: #7c3aed;
     pointer-events: none;
+    z-index: 1001;
 }
 
 /* Handle */
@@ -350,6 +353,7 @@ input:checked + .toggle-slider:before {
     width: 24px;
     height: 24px;
     margin: 0 auto;
+    user-select: none;
 }
 
 .handle:hover {

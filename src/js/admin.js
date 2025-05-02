@@ -2,6 +2,12 @@
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('Admin page loaded');
 
+    // Initialize productsData
+    let productsData = {
+        categories: [],
+        products: []
+    };
+
     // Try to load from JSON file first
     try {
         const response = await fetch('src/data/products.json');
