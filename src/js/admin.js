@@ -281,11 +281,18 @@ document.addEventListener('DOMContentLoaded', async function() {
             row.innerHTML = `
                 <td class="text-cell">${product.id || ''}</td>
                 <td class="text-cell">${product.name || ''}</td>
+                <td class="text-cell">${category ? category.name : ''}</td>
+                <td class="text-cell price">R$ ${product.price ? parseFloat(product.price).toFixed(2) : '0.00'}</td>
                 <td class="icon-cell">
                     <img src="${product.image || ''}" alt="${product.name || ''}" class="table-icon">
                 </td>
-                <td class="text-cell description">${product.description || ''}</td>
-                <td class="text-cell price">R$ ${product.price ? parseFloat(product.price).toFixed(2) : '0.00'}</td>
+                <td class="toggle-cell">
+                    <label class="toggle-switch">
+                        <input type="checkbox" ${product.highlight ? 'checked' : ''} 
+                               onchange="toggleHighlight('${product.id}', this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </td>
                 <td class="actions-cell">
                     <div class="action-buttons">
                         <button class="action-button edit" title="Editar" onclick="editProduct('${product.id}')">
