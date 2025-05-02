@@ -156,6 +156,76 @@ document.addEventListener('DOMContentLoaded', async function() {
     };
     publishBtn.parentNode.insertBefore(resetBtn, publishBtn.nextSibling);
 
+    // Add GitHub push button
+    const githubPushBtn = document.createElement('button');
+    githubPushBtn.className = 'admin-button github';
+    githubPushBtn.innerHTML = '<i class="ti ti-brand-github"></i> Push para GitHub';
+    githubPushBtn.style.marginLeft = '1rem';
+    githubPushBtn.onclick = async function() {
+        try {
+            // Use the token directly
+            const token = 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;
+            if (!token) {
+                alert('Token não configurado');
+                return;
+            }
+
+            // Show loading state
+            githubPushBtn.disabled = true;
+            githubPushBtn.innerHTML = '<i class="ti ti-loader"></i> Enviando...';
+
+            // Prepare the data
+            const jsonData = JSON.stringify(productsData, null, 2);
+            const base64Content = btoa(jsonData);
+            
+            // Get current file SHA (needed for update)
+            const getFileResponse = await fetch('https://api.github.com/repos/Tazmania2/Superloot/contents/src/data/products.json', {
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            let sha;
+            if (getFileResponse.ok) {
+                const fileData = await getFileResponse.json();
+                sha = fileData.sha;
+            }
+
+            // Push to GitHub
+            const response = await fetch('https://api.github.com/repos/Tazmania2/Superloot/contents/src/data/products.json', {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: 'Atualização automática do products.json',
+                    content: base64Content,
+                    sha: sha // Will be undefined for new files
+                })
+            });
+
+            if (response.ok) {
+                alert('Arquivo atualizado com sucesso no GitHub!');
+                // Force reload the page to get fresh data
+                window.location.reload();
+            } else {
+                const error = await response.json();
+                throw new Error(error.message || 'Erro ao enviar para o GitHub');
+            }
+        } catch (error) {
+            console.error('Error pushing to GitHub:', error);
+            alert('Erro ao enviar para o GitHub: ' + error.message);
+        } finally {
+            // Reset button state
+            githubPushBtn.disabled = false;
+            githubPushBtn.innerHTML = '<i class="ti ti-brand-github"></i> Push para GitHub';
+        }
+    };
+    publishBtn.parentNode.insertBefore(githubPushBtn, publishBtn.nextSibling);
+
     // Functions
     function loadCategories() {
         categoriesList.innerHTML = '';

@@ -99,6 +99,24 @@
     background: #2563eb;
 }
 
+.admin-button.github {
+    background-color: #24292e;
+    color: white;
+}
+
+.admin-button.github:hover {
+    background-color: #1b1f23;
+}
+
+.admin-button.github:disabled {
+    background-color: #6a737d;
+    cursor: not-allowed;
+}
+
+.admin-button.github i {
+    margin-right: 8px;
+}
+
 /* Admin Table */
 .admin-table-container {
     overflow-x: auto;
