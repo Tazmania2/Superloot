@@ -248,7 +248,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Functions
     function loadCategories() {
         categoriesList.innerHTML = '';
-        // Sort categories by order
         const sortedCategories = [...productsData.categories].sort((a, b) => (a.order || 0) - (b.order || 0));
         
         sortedCategories.forEach((category, index) => {
@@ -268,13 +267,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                     <div class="handle" draggable="true">
                         <i class="ti ti-grip-vertical"></i>
                     </div>
-                    ${category.id || ''}
+                    ${category.id}
                 </td>
-                <td class="text-cell">${category.name || ''}</td>
+                <td class="text-cell">${category.name}</td>
                 <td class="icon-cell">
-                    <img src="${category.icon || ''}" alt="${category.name || ''}" class="table-icon">
+                    <img src="${category.icon}" alt="${category.name}" class="table-icon">
                 </td>
-                <td class="text-cell description">${category.description || ''}</td>
+                <td class="text-cell description">${category.description}</td>
                 <td class="actions-cell">
                     <div class="action-buttons">
                         <button class="action-button edit" title="Editar" onclick="editCategory('${category.id}')">
@@ -293,7 +292,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     function loadProducts() {
         productsList.innerHTML = '';
-        // Sort products by order
         const sortedProducts = [...productsData.products].sort((a, b) => (a.order || 0) - (b.order || 0));
         
         sortedProducts.forEach((product, index) => {
@@ -314,13 +312,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                     <div class="handle" draggable="true">
                         <i class="ti ti-grip-vertical"></i>
                     </div>
-                    ${product.id || ''}
+                    ${product.id}
                 </td>
-                <td class="text-cell">${product.name || ''}</td>
+                <td class="text-cell">${product.name}</td>
                 <td class="text-cell">${category ? category.name : ''}</td>
-                <td class="text-cell price">R$ ${product.price ? parseFloat(product.price).toFixed(2) : '0.00'}</td>
+                <td class="text-cell price">R$ ${parseFloat(product.price || 0).toFixed(2)}</td>
                 <td class="icon-cell">
-                    <img src="${product.image || ''}" alt="${product.name || ''}" class="table-icon">
+                    <img src="${product.image}" alt="${product.name}" class="table-icon">
                 </td>
                 <td class="toggle-cell">
                     <label class="toggle-switch">
