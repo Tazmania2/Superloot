@@ -251,9 +251,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         productsData.categories.forEach(category => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${category.name}</td>
-                <td><img src="${category.icon}" alt="${category.name}" style="width: 24px; height: 24px; object-fit: contain;"></td>
-                <td>${category.order}</td>
+                <td>${category.id || ''}</td>
+                <td>${category.name || ''}</td>
+                <td class="icon-cell">
+                    <img src="${category.icon || ''}" alt="${category.name || ''}" 
+                         style="width: 24px; height: 24px; object-fit: contain;">
+                </td>
+                <td>${category.description || ''}</td>
                 <td>
                     <div class="action-buttons">
                         <button class="action-button edit" onclick="editCategory('${category.id}')">
@@ -276,10 +280,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             const category = productsData.categories.find(c => c.id === product.category);
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${product.name}</td>
-                <td>${category ? category.name : 'N/A'}</td>
-                <td>R$ ${parseFloat(product.price).toFixed(2)}</td>
-                <td>${product.order}</td>
+                <td>${product.id || ''}</td>
+                <td>${product.name || ''}</td>
+                <td>${category ? category.name : ''}</td>
+                <td>R$ ${product.price ? parseFloat(product.price).toFixed(2) : '0.00'}</td>
                 <td>
                     <div class="action-buttons">
                         <button class="action-button edit" onclick="editProduct('${product.id}')">
