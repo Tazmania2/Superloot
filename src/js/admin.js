@@ -251,19 +251,18 @@ document.addEventListener('DOMContentLoaded', async function() {
         productsData.categories.forEach(category => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${category.id || ''}</td>
-                <td>${category.name || ''}</td>
+                <td class="text-cell">${category.id || ''}</td>
+                <td class="text-cell">${category.name || ''}</td>
                 <td class="icon-cell">
-                    <img src="${category.icon || ''}" alt="${category.name || ''}" 
-                         style="width: 24px; height: 24px; object-fit: contain;">
+                    <img src="${category.icon || ''}" alt="${category.name || ''}" class="table-icon">
                 </td>
-                <td>${category.description || ''}</td>
-                <td>
+                <td class="text-cell description">${category.description || ''}</td>
+                <td class="actions-cell">
                     <div class="action-buttons">
-                        <button class="action-button edit" onclick="editCategory('${category.id}')">
+                        <button class="action-button edit" title="Editar" onclick="editCategory('${category.id}')">
                             <i class="ti ti-edit"></i>
                         </button>
-                        <button class="action-button delete" onclick="deleteCategory('${category.id}')">
+                        <button class="action-button delete" title="Excluir" onclick="deleteCategory('${category.id}')">
                             <i class="ti ti-trash"></i>
                         </button>
                     </div>
@@ -280,16 +279,19 @@ document.addEventListener('DOMContentLoaded', async function() {
             const category = productsData.categories.find(c => c.id === product.category);
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${product.id || ''}</td>
-                <td>${product.name || ''}</td>
-                <td>${category ? category.name : ''}</td>
-                <td>R$ ${product.price ? parseFloat(product.price).toFixed(2) : '0.00'}</td>
-                <td>
+                <td class="text-cell">${product.id || ''}</td>
+                <td class="text-cell">${product.name || ''}</td>
+                <td class="icon-cell">
+                    <img src="${product.image || ''}" alt="${product.name || ''}" class="table-icon">
+                </td>
+                <td class="text-cell description">${product.description || ''}</td>
+                <td class="text-cell price">R$ ${product.price ? parseFloat(product.price).toFixed(2) : '0.00'}</td>
+                <td class="actions-cell">
                     <div class="action-buttons">
-                        <button class="action-button edit" onclick="editProduct('${product.id}')">
+                        <button class="action-button edit" title="Editar" onclick="editProduct('${product.id}')">
                             <i class="ti ti-edit"></i>
                         </button>
-                        <button class="action-button delete" onclick="deleteProduct('${product.id}')">
+                        <button class="action-button delete" title="Excluir" onclick="deleteProduct('${product.id}')">
                             <i class="ti ti-trash"></i>
                         </button>
                     </div>

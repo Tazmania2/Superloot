@@ -33,14 +33,19 @@
 
 /* Admin Section */
 .admin-section {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
+    background: #111827;
     padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
 }
 
 .admin-section h2 {
-    margin-bottom: 1rem;
     color: #fff;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 /* Admin Actions */
@@ -49,21 +54,26 @@
 }
 
 .admin-button {
+    background: #7c3aed;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.25rem;
+    cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    border: none;
-    background: #7c3aed;
-    color: #fff;
     font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
 }
 
 .admin-button:hover {
     background: #6d28d9;
+    transform: translateY(-1px);
+}
+
+.admin-button:active {
+    transform: translateY(0);
 }
 
 .admin-button.secondary {
@@ -118,47 +128,78 @@
 }
 
 /* Admin Table */
-.admin-table-container {
-    overflow-x: auto;
-}
-
 .admin-table {
     width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1rem;
-    background: var(--background-color);
-    border-radius: 8px;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
+    background: #1f2937;
+    border-radius: 12px;
     overflow: hidden;
 }
 
 .admin-table th,
 .admin-table td {
-    padding: 0.75rem;
+    padding: 1rem;
     text-align: left;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
 }
 
 .admin-table th {
-    background: var(--primary-color);
-    color: white;
     font-weight: 600;
+    background: rgba(0, 0, 0, 0.2);
     white-space: nowrap;
 }
 
-.admin-table td {
-    vertical-align: middle;
+.admin-table tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-table tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Cell types */
+.admin-table .text-cell {
+    min-width: 100px;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-table .text-cell.description {
+    min-width: 200px;
+    max-width: 400px;
+}
+
+.admin-table .text-cell.price {
+    text-align: right;
+    min-width: 100px;
+    white-space: nowrap;
 }
 
 .admin-table .icon-cell {
-    width: 40px;
+    width: 48px;
     text-align: center;
+    padding: 0.5rem;
 }
 
-.admin-table .icon-cell img {
-    display: inline-block;
+.table-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
     vertical-align: middle;
 }
 
+.admin-table .actions-cell {
+    width: 100px;
+    text-align: right;
+    padding: 0.5rem;
+}
+
+/* Action buttons */
 .action-buttons {
     display: flex;
     gap: 0.5rem;
@@ -166,42 +207,60 @@
 }
 
 .action-button {
-    padding: 0.25rem 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
+    color: #fff;
     cursor: pointer;
-    background: transparent;
-    color: var(--text-color);
     transition: all 0.2s ease;
+    padding: 0;
+}
+
+.action-button.edit {
+    background: #3b82f6;
+}
+
+.action-button.delete {
+    background: #ef4444;
 }
 
 .action-button:hover {
-    background: var(--primary-color);
-    color: white;
+    transform: translateY(-1px);
+    filter: brightness(1.1);
 }
 
-.action-button.edit:hover {
-    background: var(--primary-color);
+.action-button:active {
+    transform: translateY(0);
 }
 
-.action-button.delete:hover {
-    background: var(--danger-color);
+.action-button i {
+    font-size: 1rem;
 }
 
-/* Ensure table headers match content */
-#categories-table th,
-#products-table th {
-    position: sticky;
-    top: 0;
-    z-index: 1;
+/* Responsive design */
+@media (max-width: 1024px) {
+    .admin-table .text-cell.description {
+        max-width: 300px;
+    }
 }
 
-/* Responsive table */
 @media (max-width: 768px) {
     .admin-table {
         display: block;
         overflow-x: auto;
-        white-space: nowrap;
+    }
+
+    .admin-table .text-cell.description {
+        max-width: 200px;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 0.75rem;
     }
 }
 
