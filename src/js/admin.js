@@ -36,19 +36,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             } catch (e) {
                 console.error('Error loading from localStorage:', e);
                 localStorage.removeItem('superLootData');
-                // Show error message
-                const errorContainer = document.createElement('div');
-                errorContainer.className = 'error-message';
-                errorContainer.innerHTML = `
-                    <p>Erro ao carregar os dados: ${e.message}</p>
-                    <p>Por favor, verifique se o arquivo products.json existe e tem a estrutura correta.</p>
-                `;
-                document.querySelector('.admin-container').prepend(errorContainer);
+                showError('Erro ao carregar os dados: ' + e.message);
             }
         }
     }
-    
-    console.log('Products Data:', productsData);
 
     // DOM Elements
     const categoriesList = document.getElementById('categories-list');
@@ -59,16 +50,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     const productForm = document.getElementById('product-form');
     const productCategorySelect = document.getElementById('product-category');
     const publishBtn = document.getElementById('publish-btn');
-
-    console.log('DOM Elements:', {
-        categoriesList,
-        productsList,
-        categoryModal,
-        productModal,
-        categoryForm,
-        productForm,
-        productCategorySelect
-    });
+    const resetBtn = document.getElementById('reset-btn');
+    const githubBtn = document.getElementById('github-btn');
 
     // Buttons
     const addCategoryBtn = document.getElementById('add-category-btn');
@@ -98,6 +81,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     cancelCategory.addEventListener('click', () => closeModal(categoryModal));
     cancelProduct.addEventListener('click', () => closeModal(productModal));
     publishBtn.addEventListener('click', publishChanges);
+    resetBtn.addEventListener('click', resetChanges);
+    githubBtn.addEventListener('click', pushToGitHub);
 
     // Category Form Submit
     categoryForm.addEventListener('submit', (e) => {
@@ -146,105 +131,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         closeModal(productModal);
     });
 
-    // Function to save data to localStorage
-    function saveToLocalStorage() {
-        try {
-            localStorage.setItem('superLootData', JSON.stringify(productsData));
-            console.log('Saved to localStorage');
-        } catch (e) {
-            console.error('Error saving to localStorage:', e);
-        }
-    }
-
-    // Add reset button to header
-    const resetBtn = document.createElement('button');
-    resetBtn.className = 'admin-button reset';
-    resetBtn.innerHTML = '<i class="ti ti-refresh"></i> Resetar Alterações';
-    resetBtn.style.marginLeft = '1rem';
-    resetBtn.onclick = function() {
-        if (confirm('Tem certeza que deseja descartar todas as alterações não publicadas?')) {
-            localStorage.removeItem('superLootData');
-            location.reload();
-        }
-    };
-    publishBtn.parentNode.insertBefore(resetBtn, publishBtn.nextSibling);
-
-    // Add GitHub push button
-    const githubPushBtn = document.createElement('button');
-    githubPushBtn.className = 'admin-button github';
-    githubPushBtn.innerHTML = '<i class="ti ti-brand-github"></i> Push para GitHub';
-    githubPushBtn.style.marginLeft = '1rem';
-    githubPushBtn.onclick = async function() {
-        try {
-            // Prompt for GitHub token
-            const token = prompt('Por favor, insira seu token de acesso do GitHub:');
-            if (!token) {
-                alert('Operação cancelada: Token não fornecido');
-                return;
-            }
-            
-            // Show loading state
-            githubPushBtn.disabled = true;
-            githubPushBtn.innerHTML = '<i class="ti ti-loader"></i> Enviando...';
-            
-            // Prepare the data
-            const jsonData = JSON.stringify(productsData, null, 2);
-            const base64Content = btoa(unescape(encodeURIComponent(jsonData)));
-            
-            console.log('Iniciando push para GitHub...');
-            
-            // Get current file SHA (needed for update)
-            const getFileResponse = await fetch('https://api.github.com/repos/Tazmania2/Superloot/contents/src/data/products.json', {
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            });
-            
-            let sha;
-            if (getFileResponse.ok) {
-                const fileData = await getFileResponse.json();
-                sha = fileData.sha;
-                console.log('SHA obtido com sucesso:', sha);
-            } else {
-                console.error('Erro ao obter SHA:', await getFileResponse.text());
-            }
-            
-            // Push to GitHub
-            const response = await fetch('https://api.github.com/repos/Tazmania2/Superloot/contents/src/data/products.json', {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: 'Atualização automática do products.json',
-                    content: base64Content,
-                    sha: sha
-                })
-            });
-            
-            if (response.ok) {
-                console.log('Push realizado com sucesso!');
-                alert('Arquivo atualizado com sucesso no GitHub!');
-                window.location.reload();
-            } else {
-                const error = await response.json();
-                console.error('Erro no push:', error);
-                throw new Error(error.message || 'Erro ao enviar para o GitHub');
-            }
-        } catch (error) {
-            console.error('Error pushing to GitHub:', error);
-            alert('Erro ao enviar para o GitHub: ' + error.message);
-        } finally {
-            // Reset button state
-            githubPushBtn.disabled = false;
-            githubPushBtn.innerHTML = '<i class="ti ti-brand-github"></i> Push para GitHub';
-        }
-    };
-    publishBtn.parentNode.insertBefore(githubPushBtn, publishBtn.nextSibling);
-
     // Functions
     function loadCategories() {
         categoriesList.innerHTML = '';
@@ -263,12 +149,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             row.addEventListener('dragend', handleDragEnd);
             
             row.innerHTML = `
-                <td class="text-cell">
-                    <div class="handle" draggable="true">
+                <td class="handle-cell">
+                    <div class="handle">
                         <i class="ti ti-grip-vertical"></i>
                     </div>
-                    ${category.id}
                 </td>
+                <td class="text-cell">${category.id}</td>
                 <td class="text-cell">${category.name}</td>
                 <td class="icon-cell">
                     <img src="${category.icon}" alt="${category.name}" class="table-icon">
@@ -308,12 +194,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             row.addEventListener('dragend', handleDragEnd);
             
             row.innerHTML = `
-                <td class="text-cell">
-                    <div class="handle" draggable="true">
+                <td class="handle-cell">
+                    <div class="handle">
                         <i class="ti ti-grip-vertical"></i>
                     </div>
-                    ${product.id}
                 </td>
+                <td class="text-cell">${product.id}</td>
                 <td class="text-cell">${product.name}</td>
                 <td class="text-cell">${category ? category.name : ''}</td>
                 <td class="text-cell price">R$ ${parseFloat(product.price || 0).toFixed(2)}</td>
@@ -450,98 +336,115 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    // Make functions available globally
-    window.editCategory = (categoryId) => {
-        const category = productsData.categories.find(c => c.id === categoryId);
-        if (category) {
-            openCategoryModal(category);
+    function saveToLocalStorage() {
+        try {
+            localStorage.setItem('superLootData', JSON.stringify(productsData));
+            console.log('Saved to localStorage');
+        } catch (e) {
+            console.error('Error saving to localStorage:', e);
+            showError('Erro ao salvar alterações: ' + e.message);
         }
-    };
+    }
 
-    window.deleteCategory = deleteCategory;
-    window.editProduct = (productId) => {
-        const product = productsData.products.find(p => p.id === productId);
-        if (product) {
-            openProductModal(product);
+    function resetChanges() {
+        if (confirm('Tem certeza que deseja descartar todas as alterações não publicadas?')) {
+            localStorage.removeItem('superLootData');
+            location.reload();
         }
-    };
-    window.deleteProduct = deleteProduct;
-    window.toggleHighlight = toggleHighlight;
-    window.publishChanges = publishChanges;
+    }
+
+    async function pushToGitHub() {
+        try {
+            const token = prompt('Por favor, insira seu token de acesso do GitHub:');
+            if (!token) {
+                alert('Operação cancelada: Token não fornecido');
+                return;
+            }
+            
+            githubBtn.disabled = true;
+            githubBtn.innerHTML = '<i class="ti ti-loader"></i> Enviando...';
+            
+            const jsonData = JSON.stringify(productsData, null, 2);
+            const base64Content = btoa(unescape(encodeURIComponent(jsonData)));
+            
+            const getFileResponse = await fetch('https://api.github.com/repos/Tazmania2/Superloot/contents/src/data/products.json', {
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+            
+            let sha;
+            if (getFileResponse.ok) {
+                const fileData = await getFileResponse.json();
+                sha = fileData.sha;
+            }
+            
+            const response = await fetch('https://api.github.com/repos/Tazmania2/Superloot/contents/src/data/products.json', {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: 'Atualização automática do products.json',
+                    content: base64Content,
+                    sha: sha
+                })
+            });
+            
+            if (response.ok) {
+                alert('Arquivo atualizado com sucesso no GitHub!');
+                window.location.reload();
+            } else {
+                const error = await response.json();
+                throw new Error(error.message || 'Erro ao enviar para o GitHub');
+            }
+        } catch (error) {
+            console.error('Error pushing to GitHub:', error);
+            showError('Erro ao enviar para o GitHub: ' + error.message);
+        } finally {
+            githubBtn.disabled = false;
+            githubBtn.innerHTML = '<i class="ti ti-brand-github"></i> Push para GitHub';
+        }
+    }
 
     function publishChanges() {
         try {
-            // Create a blob with the updated JSON data
             const jsonData = JSON.stringify(productsData, null, 2);
             const blob = new Blob([jsonData], { type: 'application/json' });
-            
-            // Create a download link
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = 'products.json';
-            
-            // Add the link to the document, click it, and remove it
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            // Show success message
             alert('Arquivo JSON gerado com sucesso! Faça o upload do arquivo para o servidor para aplicar as alterações.');
         } catch (error) {
             console.error('Error publishing changes:', error);
-            alert('Erro ao gerar o arquivo JSON: ' + error.message);
+            showError('Erro ao gerar o arquivo JSON: ' + error.message);
         }
     }
 
-    // Add file upload functionality
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = '.json';
-    fileInput.style.display = 'none';
-    document.body.appendChild(fileInput);
+    function showError(message) {
+        const errorContainer = document.createElement('div');
+        errorContainer.className = 'error-message';
+        errorContainer.innerHTML = `
+            <p>${message}</p>
+            <p>Por favor, verifique se o arquivo products.json existe e tem a estrutura correta.</p>
+        `;
+        document.querySelector('.admin-container').prepend(errorContainer);
+    }
 
-    const importBtn = document.createElement('button');
-    importBtn.className = 'admin-button import';
-    importBtn.innerHTML = '<i class="ti ti-file-import"></i> Importar JSON';
-    importBtn.style.marginLeft = '1rem';
-    importBtn.onclick = function() {
-        fileInput.click();
-    };
-    publishBtn.parentNode.insertBefore(importBtn, publishBtn);
-
-    fileInput.addEventListener('change', async function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            try {
-                const text = await file.text();
-                const newData = JSON.parse(text);
-                
-                // Validate the JSON structure
-                if (newData.categories && newData.products) {
-                    if (confirm('Deseja importar este arquivo JSON? Isso substituirá todos os dados atuais.')) {
-                        productsData = newData;
-                        localStorage.setItem('superLootData', JSON.stringify(productsData));
-                        loadCategories();
-                        loadProducts();
-                        alert('Dados importados com sucesso!');
-                    }
-                } else {
-                    alert('O arquivo JSON não possui a estrutura correta. Deve conter "categories" e "products".');
-                }
-            } catch (error) {
-                alert('Erro ao ler o arquivo JSON: ' + error.message);
-            }
-        }
-    });
-
-    // Drag and Drop Functionality
+    // Drag and Drop Functions
     let draggedItem = null;
     let draggedItemType = null;
 
     function handleDragStart(e) {
-        // Only allow dragging by the handle
         if (!e.target.closest('.handle')) {
             e.preventDefault();
             return;
@@ -551,7 +454,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         draggedItemType = draggedItem.dataset.type;
         draggedItem.classList.add('dragging');
         
-        // Required for Firefox
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/plain', '');
     }
@@ -563,7 +465,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         const row = e.target.closest('tr');
         if (!row || row === draggedItem || row.dataset.type !== draggedItemType) return;
         
-        // Clear existing drag-over classes
         document.querySelectorAll('.drag-over-top, .drag-over-bottom').forEach(el => {
             el.classList.remove('drag-over-top', 'drag-over-bottom');
         });
@@ -587,30 +488,24 @@ document.addEventListener('DOMContentLoaded', async function() {
         const dropIndex = parseInt(row.dataset.index);
         
         if (draggedIndex !== dropIndex) {
-            // Get drop position (before or after the target row)
             const rect = row.getBoundingClientRect();
             const midpoint = rect.top + rect.height / 2;
             const dropAfter = e.clientY > midpoint;
             
-            // Remove the dragged item from its original position
             const [movedItem] = items.splice(draggedIndex, 1);
             
-            // Insert at new position
             const newIndex = dropAfter ? 
                 (dropIndex > draggedIndex ? dropIndex : dropIndex + 1) : 
                 (dropIndex < draggedIndex ? dropIndex : dropIndex - 1);
             
             items.splice(newIndex, 0, movedItem);
             
-            // Update order values
             items.forEach((item, index) => {
                 item.order = index + 1;
             });
             
-            // Save changes
             saveToLocalStorage();
             
-            // Reload the appropriate list
             if (draggedItemType === 'category') {
                 loadCategories();
             } else {
@@ -624,7 +519,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             draggedItem.classList.remove('dragging');
         }
         
-        // Clear all drag-over classes
         document.querySelectorAll('.drag-over-top, .drag-over-bottom').forEach(el => {
             el.classList.remove('drag-over-top', 'drag-over-bottom');
         });
@@ -632,4 +526,22 @@ document.addEventListener('DOMContentLoaded', async function() {
         draggedItem = null;
         draggedItemType = null;
     }
+
+    // Make functions available globally
+    window.editCategory = (categoryId) => {
+        const category = productsData.categories.find(c => c.id === categoryId);
+        if (category) {
+            openCategoryModal(category);
+        }
+    };
+
+    window.deleteCategory = deleteCategory;
+    window.editProduct = (productId) => {
+        const product = productsData.products.find(p => p.id === productId);
+        if (product) {
+            openProductModal(product);
+        }
+    };
+    window.deleteProduct = deleteProduct;
+    window.toggleHighlight = toggleHighlight;
 }); 

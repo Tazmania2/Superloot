@@ -34,6 +34,13 @@
     font-size: 1.75rem;
     font-weight: 600;
     margin: 0;
+    flex-grow: 1;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
 }
 
 /* Admin Main */
@@ -51,94 +58,17 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-.admin-section h2 {
-    color: #fff;
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
+.section-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-}
-
-/* Admin Actions */
-.admin-actions {
     margin-bottom: 1.5rem;
-    display: flex;
-    gap: 1rem;
 }
 
-.admin-button {
-    background: #7c3aed;
+.section-header h2 {
     color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 0.75rem 1.25rem;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-
-.admin-button:hover {
-    background: #6d28d9;
-    transform: translateY(-1px);
-}
-
-.admin-button:active {
-    transform: translateY(0);
-}
-
-.admin-button.secondary {
-    background: #4b5563;
-}
-
-.admin-button.secondary:hover {
-    background: #374151;
-}
-
-.admin-button.publish {
-    background: #10b981;
-    margin-left: auto;
-}
-
-.admin-button.publish:hover {
-    background: #059669;
-}
-
-.admin-button.reset {
-    background: #6b7280;
-}
-
-.admin-button.reset:hover {
-    background: #4b5563;
-}
-
-.admin-button.import {
-    background: #3b82f6;
-}
-
-.admin-button.import:hover {
-    background: #2563eb;
-}
-
-.admin-button.github {
-    background-color: #24292e;
-    color: white;
-}
-
-.admin-button.github:hover {
-    background-color: #1b1f23;
-}
-
-.admin-button.github:disabled {
-    background-color: #6a737d;
-    cursor: not-allowed;
-}
-
-.admin-button.github i {
-    margin-right: 8px;
+    font-size: 1.5rem;
+    margin: 0;
 }
 
 /* Admin Table Container */
@@ -186,6 +116,11 @@
 }
 
 /* Cell types */
+.handle-cell {
+    width: 40px;
+    padding: 0.5rem !important;
+}
+
 .admin-table .text-cell {
     min-width: 100px;
     max-width: 300px;
@@ -320,45 +255,83 @@ input:checked + .toggle-slider:before {
     font-size: 1.25rem;
 }
 
-/* Responsive Design */
-@media (max-width: 1024px) {
-    .admin-container {
-        padding: 1.5rem;
-    }
-    
-    .admin-table .text-cell {
-        max-width: 200px;
-    }
+/* Admin Buttons */
+.admin-button {
+    background: #7c3aed;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.25rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
-@media (max-width: 768px) {
-    .admin-container {
-        padding: 1rem;
-    }
-    
-    .admin-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-    
-    .admin-header .admin-button.publish {
-        margin-left: 0;
-        width: 100%;
-    }
-    
-    .admin-table th,
-    .admin-table td {
-        padding: 0.75rem;
-    }
-    
-    .admin-table .text-cell {
-        max-width: 150px;
-    }
-    
-    .admin-section {
-        padding: 1.25rem;
-    }
+.admin-button:hover {
+    background: #6d28d9;
+    transform: translateY(-1px);
+}
+
+.admin-button:active {
+    transform: translateY(0);
+}
+
+.admin-button.secondary {
+    background: #4b5563;
+}
+
+.admin-button.secondary:hover {
+    background: #374151;
+}
+
+.admin-button.publish {
+    background: #10b981;
+}
+
+.admin-button.publish:hover {
+    background: #059669;
+}
+
+.admin-button.reset {
+    background: #6b7280;
+}
+
+.admin-button.reset:hover {
+    background: #4b5563;
+}
+
+.admin-button.github {
+    background-color: #24292e;
+    color: white;
+}
+
+.admin-button.github:hover {
+    background-color: #1b1f23;
+}
+
+.admin-button.github:disabled {
+    background-color: #6a737d;
+    cursor: not-allowed;
+}
+
+/* Handle */
+.handle {
+    cursor: move;
+    color: #9ca3af;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.handle:hover {
+    color: #7c3aed;
+    background: rgba(124, 58, 237, 0.1);
 }
 
 /* Drag and Drop Styles */
@@ -381,19 +354,6 @@ input:checked + .toggle-slider:before {
 
 .admin-table tr[draggable="true"] {
     cursor: move;
-}
-
-.handle {
-    cursor: move;
-    color: #9ca3af;
-    padding: 0.25rem;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-}
-
-.handle:hover {
-    color: #7c3aed;
-    background: rgba(124, 58, 237, 0.1);
 }
 
 /* Modal */
@@ -446,13 +406,14 @@ input:checked + .toggle-slider:before {
 
 /* Form */
 .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
     color: #fff;
+    font-weight: 500;
 }
 
 .form-group input,
@@ -464,6 +425,7 @@ input:checked + .toggle-slider:before {
     border: 1px solid #4b5563;
     background: #374151;
     color: #fff;
+    font-size: 1rem;
 }
 
 .form-group textarea {
@@ -485,17 +447,55 @@ input:checked + .toggle-slider:before {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
-    margin-top: 1.5rem;
+    margin-top: 2rem;
 }
 
-/* Responsive */
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .admin-container {
+        padding: 1.5rem;
+    }
+    
+    .admin-table .text-cell {
+        max-width: 200px;
+    }
+}
+
 @media (max-width: 768px) {
     .admin-container {
         padding: 1rem;
     }
-
+    
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .header-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .header-actions .admin-button {
+        width: 100%;
+    }
+    
+    .admin-table th,
+    .admin-table td {
+        padding: 0.75rem;
+    }
+    
+    .admin-table .text-cell {
+        max-width: 150px;
+    }
+    
+    .admin-section {
+        padding: 1.25rem;
+    }
+    
     .modal-content {
         margin: 1rem;
-        padding: 1rem;
+        padding: 1.5rem;
     }
 } 

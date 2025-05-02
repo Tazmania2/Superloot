@@ -16,16 +16,26 @@
                 <img src="https://i.ibb.co/hxhr7r6k/Color.png" alt="Superloot Logo">
             </div>
             <h1>Painel Administrativo</h1>
-            <button class="admin-button publish" id="publish-btn">
-                <i class="ti ti-upload"></i>
-                Publicar Alterações
-            </button>
+            <div class="header-actions">
+                <button class="admin-button reset" id="reset-btn">
+                    <i class="ti ti-refresh"></i>
+                    Resetar Alterações
+                </button>
+                <button class="admin-button github" id="github-btn">
+                    <i class="ti ti-brand-github"></i>
+                    Push para GitHub
+                </button>
+                <button class="admin-button publish" id="publish-btn">
+                    <i class="ti ti-upload"></i>
+                    Publicar Alterações
+                </button>
+            </div>
         </header>
 
         <main class="admin-main">
             <section class="admin-section">
-                <h2>Categorias</h2>
-                <div class="admin-actions">
+                <div class="section-header">
+                    <h2>Categorias</h2>
                     <button class="admin-button" id="add-category-btn">
                         <i class="ti ti-plus"></i>
                         Nova Categoria
@@ -35,6 +45,7 @@
                     <table class="admin-table" id="categories-table">
                         <thead>
                             <tr>
+                                <th class="handle-cell"></th>
                                 <th>ID</th>
                                 <th>Nome</th>
                                 <th>Ícone</th>
@@ -50,8 +61,8 @@
             </section>
 
             <section class="admin-section">
-                <h2>Produtos</h2>
-                <div class="admin-actions">
+                <div class="section-header">
+                    <h2>Produtos</h2>
                     <button class="admin-button" id="add-product-btn">
                         <i class="ti ti-plus"></i>
                         Novo Produto
@@ -61,6 +72,7 @@
                     <table class="admin-table" id="products-table">
                         <thead>
                             <tr>
+                                <th class="handle-cell"></th>
                                 <th>ID</th>
                                 <th>Nome</th>
                                 <th>Categoria</th>
