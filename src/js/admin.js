@@ -103,10 +103,16 @@ document.addEventListener('DOMContentLoaded', async function() {
     categoryForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const formData = new FormData(categoryForm);
-        const categoryData = Object.fromEntries(formData.entries());
+        const categoryData = {
+            id: formData.get('id') || Date.now().toString(),
+            name: formData.get('name'),
+            icon: formData.get('icon'),
+            description: formData.get('description'),
+            order: parseInt(formData.get('position')) || productsData.categories.length + 1
+        };
 
         if (currentEditingCategory) {
-            updateCategory(currentEditingCategory, categoryData);
+            updateCategory(currentEditingCategory.id, categoryData);
         } else {
             addCategory(categoryData);
         }
@@ -118,14 +124,21 @@ document.addEventListener('DOMContentLoaded', async function() {
     productForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const formData = new FormData(productForm);
-        const productData = Object.fromEntries(formData.entries());
-        
-        // Convert price to number and get highlight status
-        productData.price = parseFloat(productData.price);
-        productData.highlight = document.getElementById('product-highlight').checked;
+        const productData = {
+            id: formData.get('id') || Date.now().toString(),
+            name: formData.get('name'),
+            category: formData.get('category'),
+            price: formData.get('price'),
+            image: formData.get('image'),
+            description: formData.get('description'),
+            buyLink: formData.get('buyLink'),
+            discordLink: formData.get('discordLink'),
+            highlight: document.getElementById('product-highlight').checked,
+            order: parseInt(formData.get('position')) || productsData.products.length + 1
+        };
 
         if (currentEditingProduct) {
-            updateProduct(currentEditingProduct, productData);
+            updateProduct(currentEditingProduct.id, productData);
         } else {
             addProduct(productData);
         }
@@ -237,7 +250,22 @@ document.addEventListener('DOMContentLoaded', async function() {
     function loadCategories() {
         categoriesList.innerHTML = '';
         productsData.categories.forEach(category => {
-            const row = createCategoryRow(category);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${category.name}</td>
+                <td><img src="${category.icon}" alt="${category.name}" style="width: 24px; height: 24px;"></td>
+                <td>${category.order}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="action-button edit" onclick="editCategory('${category.id}')">
+                            <i class="ti ti-edit"></i>
+                        </button>
+                        <button class="action-button delete" onclick="deleteCategory('${category.id}')">
+                            <i class="ti ti-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            `;
             categoriesList.appendChild(row);
         });
         updateProductCategorySelect();
@@ -246,60 +274,26 @@ document.addEventListener('DOMContentLoaded', async function() {
     function loadProducts() {
         productsList.innerHTML = '';
         productsData.products.forEach(product => {
-            const row = createProductRow(product);
+            const category = productsData.categories.find(c => c.id === product.category);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${product.name}</td>
+                <td>${category ? category.name : 'N/A'}</td>
+                <td>R$ ${product.price}</td>
+                <td>${product.order}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="action-button edit" onclick="editProduct('${product.id}')">
+                            <i class="ti ti-edit"></i>
+                        </button>
+                        <button class="action-button delete" onclick="deleteProduct('${product.id}')">
+                            <i class="ti ti-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            `;
             productsList.appendChild(row);
         });
-    }
-
-    function createCategoryRow(category) {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${category.id}</td>
-            <td>${category.name}</td>
-            <td><img src="${category.icon}" alt="${category.name}" style="width: 24px; height: 24px;"></td>
-            <td>${category.description}</td>
-            <td>
-                <div class="action-buttons">
-                    <button class="action-button edit" onclick="editCategory('${category.id}')">
-                        <i class="ti ti-edit"></i>
-                    </button>
-                    <button class="action-button delete" onclick="deleteCategory('${category.id}')">
-                        <i class="ti ti-trash"></i>
-                    </button>
-                </div>
-            </td>
-        `;
-        return row;
-    }
-
-    function createProductRow(product) {
-        const category = productsData.categories.find(c => c.id === product.category);
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${product.id}</td>
-            <td>${product.name}</td>
-            <td>${category ? category.name : 'N/A'}</td>
-            <td>R$ ${product.price.toFixed(2)}</td>
-            <td><img src="${product.image}" alt="${product.name}" style="width: 24px; height: 24px;"></td>
-            <td>
-                <label class="toggle-switch">
-                    <input type="checkbox" ${product.highlight ? 'checked' : ''} 
-                           onchange="toggleHighlight('${product.id}', this.checked)">
-                    <span class="toggle-slider"></span>
-                </label>
-            </td>
-            <td>
-                <div class="action-buttons">
-                    <button class="action-button edit" onclick="editProduct('${product.id}')">
-                        <i class="ti ti-edit"></i>
-                    </button>
-                    <button class="action-button delete" onclick="deleteProduct('${product.id}')">
-                        <i class="ti ti-trash"></i>
-                    </button>
-                </div>
-            </td>
-        `;
-        return row;
     }
 
     function updateProductCategorySelect() {
