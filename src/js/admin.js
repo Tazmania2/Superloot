@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     githubPushBtn.onclick = async function() {
         try {
             // Get token from Vercel environment variable
-            const token = process.env.NEXT_PUBLIC_GITHUB_TOKEN;
+            const token = window.NEXT_PUBLIC_GITHUB_TOKEN;
             console.log('Token available:', !!token); // Debug log
             
             if (!token) {
