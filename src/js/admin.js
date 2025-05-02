@@ -163,10 +163,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     githubPushBtn.style.marginLeft = '1rem';
     githubPushBtn.onclick = async function() {
         try {
-            // Use the token directly
-            const token = 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;
+            // Get token from environment variable
+            const token = process.env.GITHUB_TOKEN;
+            console.log('Token available:', !!token); // Debug log
+            
             if (!token) {
-                alert('Token não configurado');
+                alert('Token não encontrado. Verifique se a variável de ambiente GITHUB_TOKEN está configurada corretamente.');
                 return;
             }
 
@@ -177,6 +179,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Prepare the data
             const jsonData = JSON.stringify(productsData, null, 2);
             const base64Content = btoa(jsonData);
+            
+            console.log('Iniciando push para GitHub...'); // Debug log
             
             // Get current file SHA (needed for update)
             const getFileResponse = await fetch('https://api.github.com/repos/Tazmania2/Superloot/contents/src/data/products.json', {
@@ -190,6 +194,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (getFileResponse.ok) {
                 const fileData = await getFileResponse.json();
                 sha = fileData.sha;
+                console.log('SHA obtido com sucesso:', sha); // Debug log
+            } else {
+                console.error('Erro ao obter SHA:', await getFileResponse.text()); // Debug log
             }
 
             // Push to GitHub
@@ -208,11 +215,13 @@ document.addEventListener('DOMContentLoaded', async function() {
             });
 
             if (response.ok) {
+                console.log('Push realizado com sucesso!'); // Debug log
                 alert('Arquivo atualizado com sucesso no GitHub!');
                 // Force reload the page to get fresh data
                 window.location.reload();
             } else {
                 const error = await response.json();
+                console.error('Erro no push:', error); // Debug log
                 throw new Error(error.message || 'Erro ao enviar para o GitHub');
             }
         } catch (error) {
