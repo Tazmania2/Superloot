@@ -265,7 +265,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             
             row.innerHTML = `
                 <td class="text-cell">
-                    <i class="ti ti-grip-vertical handle" style="cursor: move; margin-right: 8px; opacity: 0.5;"></i>
+                    <div class="handle" draggable="true">
+                        <i class="ti ti-grip-vertical"></i>
+                    </div>
                     ${category.id || ''}
                 </td>
                 <td class="text-cell">${category.name || ''}</td>
@@ -309,7 +311,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             
             row.innerHTML = `
                 <td class="text-cell">
-                    <i class="ti ti-grip-vertical handle" style="cursor: move; margin-right: 8px; opacity: 0.5;"></i>
+                    <div class="handle" draggable="true">
+                        <i class="ti ti-grip-vertical"></i>
+                    </div>
                     ${product.id || ''}
                 </td>
                 <td class="text-cell">${product.name || ''}</td>
@@ -539,71 +543,94 @@ document.addEventListener('DOMContentLoaded', async function() {
     let draggedItemType = null;
 
     function handleDragStart(e) {
-        draggedItem = e.target;
-        draggedItemType = e.target.dataset.type;
-        e.target.style.opacity = '0.5';
-        
         // Only allow dragging by the handle
-        if (!e.target.querySelector('.handle').contains(e.target)) {
+        if (!e.target.closest('.handle')) {
             e.preventDefault();
-            return false;
+            return;
         }
+        
+        draggedItem = e.target.closest('tr');
+        draggedItemType = draggedItem.dataset.type;
+        draggedItem.classList.add('dragging');
+        
+        // Required for Firefox
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', '');
     }
 
     function handleDragOver(e) {
         e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        
         const row = e.target.closest('tr');
-        if (row && row.dataset.type === draggedItemType) {
-            const items = Array.from(row.parentNode.children);
-            const draggedIndex = parseInt(draggedItem.dataset.index);
-            const hoverIndex = parseInt(row.dataset.index);
-            
-            if (draggedIndex < hoverIndex) {
-                row.style.borderBottom = '2px solid #7c3aed';
-                row.style.borderTop = '';
-            } else {
-                row.style.borderTop = '2px solid #7c3aed';
-                row.style.borderBottom = '';
-            }
+        if (!row || row === draggedItem || row.dataset.type !== draggedItemType) return;
+        
+        // Clear existing drag-over classes
+        document.querySelectorAll('.drag-over-top, .drag-over-bottom').forEach(el => {
+            el.classList.remove('drag-over-top', 'drag-over-bottom');
+        });
+        
+        const rect = row.getBoundingClientRect();
+        const midpoint = rect.top + rect.height / 2;
+        if (e.clientY < midpoint) {
+            row.classList.add('drag-over-top');
+        } else {
+            row.classList.add('drag-over-bottom');
         }
     }
 
     function handleDrop(e) {
         e.preventDefault();
         const row = e.target.closest('tr');
-        if (row && row.dataset.type === draggedItemType) {
-            const items = draggedItemType === 'category' ? productsData.categories : productsData.products;
-            const draggedIndex = parseInt(draggedItem.dataset.index);
-            const dropIndex = parseInt(row.dataset.index);
+        if (!row || row === draggedItem || row.dataset.type !== draggedItemType) return;
+        
+        const items = draggedItemType === 'category' ? productsData.categories : productsData.products;
+        const draggedIndex = parseInt(draggedItem.dataset.index);
+        const dropIndex = parseInt(row.dataset.index);
+        
+        if (draggedIndex !== dropIndex) {
+            // Get drop position (before or after the target row)
+            const rect = row.getBoundingClientRect();
+            const midpoint = rect.top + rect.height / 2;
+            const dropAfter = e.clientY > midpoint;
             
-            if (draggedIndex !== dropIndex) {
-                // Update order in data
-                const [movedItem] = items.splice(draggedIndex, 1);
-                items.splice(dropIndex, 0, movedItem);
-                
-                // Update order values
-                items.forEach((item, index) => {
-                    item.order = index + 1;
-                });
-                
-                // Save and reload
-                saveToLocalStorage();
-                if (draggedItemType === 'category') {
-                    loadCategories();
-                } else {
-                    loadProducts();
-                }
+            // Remove the dragged item from its original position
+            const [movedItem] = items.splice(draggedIndex, 1);
+            
+            // Insert at new position
+            const newIndex = dropAfter ? 
+                (dropIndex > draggedIndex ? dropIndex : dropIndex + 1) : 
+                (dropIndex < draggedIndex ? dropIndex : dropIndex - 1);
+            
+            items.splice(newIndex, 0, movedItem);
+            
+            // Update order values
+            items.forEach((item, index) => {
+                item.order = index + 1;
+            });
+            
+            // Save changes
+            saveToLocalStorage();
+            
+            // Reload the appropriate list
+            if (draggedItemType === 'category') {
+                loadCategories();
+            } else {
+                loadProducts();
             }
         }
     }
 
     function handleDragEnd(e) {
-        e.target.style.opacity = '';
-        const rows = document.querySelectorAll('tr');
-        rows.forEach(row => {
-            row.style.borderTop = '';
-            row.style.borderBottom = '';
+        if (draggedItem) {
+            draggedItem.classList.remove('dragging');
+        }
+        
+        // Clear all drag-over classes
+        document.querySelectorAll('.drag-over-top, .drag-over-bottom').forEach(el => {
+            el.classList.remove('drag-over-top', 'drag-over-bottom');
         });
+        
         draggedItem = null;
         draggedItemType = null;
     }

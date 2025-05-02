@@ -167,6 +167,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .admin-table .text-cell.description {
@@ -422,16 +425,7 @@ input:checked + .toggle-slider:before {
 
 /* Drag and Drop styles */
 .admin-table tr {
-    transition: background-color 0.2s ease, opacity 0.2s ease;
-    cursor: default;
-}
-
-.admin-table tr[draggable="true"] {
-    user-select: none;
-}
-
-.admin-table tr[draggable="true"]:hover .handle {
-    opacity: 1 !important;
+    transition: all 0.2s ease;
 }
 
 .admin-table tr.dragging {
@@ -447,16 +441,24 @@ input:checked + .toggle-slider:before {
     border-bottom: 2px solid #7c3aed;
 }
 
+/* Prevent text selection during drag */
+.admin-table tr[draggable="true"] {
+    user-select: none;
+}
+
 .handle {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: #9ca3af;
-    transition: opacity 0.2s ease;
+    padding: 4px;
+    margin-right: 8px;
+    border-radius: 4px;
     cursor: move;
+    opacity: 0.5;
+    transition: all 0.2s ease;
 }
 
-/* Prevent text selection during drag */
-.admin-table.dragging * {
-    user-select: none;
+.handle:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.1);
 } 
