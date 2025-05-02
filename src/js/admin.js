@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <td class="icon-cell">
                     <img src="${category.icon}" alt="${category.name}" class="table-icon">
                 </td>
-                <td class="text-cell description">${category.description}</td>
+                <td class="text-cell">${category.description}</td>
                 <td class="actions-cell">
                     <div class="action-buttons">
                         <button class="action-button edit" title="Editar" onclick="editCategory('${category.id}')">
