@@ -418,4 +418,45 @@ input:checked + .toggle-slider:before {
         margin: 1rem;
         padding: 1rem;
     }
+}
+
+/* Drag and Drop styles */
+.admin-table tr {
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+    cursor: default;
+}
+
+.admin-table tr[draggable="true"] {
+    user-select: none;
+}
+
+.admin-table tr[draggable="true"]:hover .handle {
+    opacity: 1 !important;
+}
+
+.admin-table tr.dragging {
+    opacity: 0.5;
+    background: rgba(124, 58, 237, 0.1);
+}
+
+.admin-table tr.drag-over-top {
+    border-top: 2px solid #7c3aed;
+}
+
+.admin-table tr.drag-over-bottom {
+    border-bottom: 2px solid #7c3aed;
+}
+
+.handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    transition: opacity 0.2s ease;
+    cursor: move;
+}
+
+/* Prevent text selection during drag */
+.admin-table.dragging * {
+    user-select: none;
 } 

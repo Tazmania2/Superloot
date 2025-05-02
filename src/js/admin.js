@@ -248,10 +248,26 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Functions
     function loadCategories() {
         categoriesList.innerHTML = '';
-        productsData.categories.forEach(category => {
+        // Sort categories by order
+        const sortedCategories = [...productsData.categories].sort((a, b) => (a.order || 0) - (b.order || 0));
+        
+        sortedCategories.forEach((category, index) => {
             const row = document.createElement('tr');
+            row.draggable = true;
+            row.dataset.id = category.id;
+            row.dataset.type = 'category';
+            row.dataset.index = index;
+            
+            row.addEventListener('dragstart', handleDragStart);
+            row.addEventListener('dragover', handleDragOver);
+            row.addEventListener('drop', handleDrop);
+            row.addEventListener('dragend', handleDragEnd);
+            
             row.innerHTML = `
-                <td class="text-cell">${category.id || ''}</td>
+                <td class="text-cell">
+                    <i class="ti ti-grip-vertical handle" style="cursor: move; margin-right: 8px; opacity: 0.5;"></i>
+                    ${category.id || ''}
+                </td>
                 <td class="text-cell">${category.name || ''}</td>
                 <td class="icon-cell">
                     <img src="${category.icon || ''}" alt="${category.name || ''}" class="table-icon">
@@ -275,11 +291,27 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     function loadProducts() {
         productsList.innerHTML = '';
-        productsData.products.forEach(product => {
+        // Sort products by order
+        const sortedProducts = [...productsData.products].sort((a, b) => (a.order || 0) - (b.order || 0));
+        
+        sortedProducts.forEach((product, index) => {
             const category = productsData.categories.find(c => c.id === product.category);
             const row = document.createElement('tr');
+            row.draggable = true;
+            row.dataset.id = product.id;
+            row.dataset.type = 'product';
+            row.dataset.index = index;
+            
+            row.addEventListener('dragstart', handleDragStart);
+            row.addEventListener('dragover', handleDragOver);
+            row.addEventListener('drop', handleDrop);
+            row.addEventListener('dragend', handleDragEnd);
+            
             row.innerHTML = `
-                <td class="text-cell">${product.id || ''}</td>
+                <td class="text-cell">
+                    <i class="ti ti-grip-vertical handle" style="cursor: move; margin-right: 8px; opacity: 0.5;"></i>
+                    ${product.id || ''}
+                </td>
                 <td class="text-cell">${product.name || ''}</td>
                 <td class="text-cell">${category ? category.name : ''}</td>
                 <td class="text-cell price">R$ ${product.price ? parseFloat(product.price).toFixed(2) : '0.00'}</td>
@@ -501,4 +533,78 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         }
     });
+
+    // Drag and Drop Functionality
+    let draggedItem = null;
+    let draggedItemType = null;
+
+    function handleDragStart(e) {
+        draggedItem = e.target;
+        draggedItemType = e.target.dataset.type;
+        e.target.style.opacity = '0.5';
+        
+        // Only allow dragging by the handle
+        if (!e.target.querySelector('.handle').contains(e.target)) {
+            e.preventDefault();
+            return false;
+        }
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        const row = e.target.closest('tr');
+        if (row && row.dataset.type === draggedItemType) {
+            const items = Array.from(row.parentNode.children);
+            const draggedIndex = parseInt(draggedItem.dataset.index);
+            const hoverIndex = parseInt(row.dataset.index);
+            
+            if (draggedIndex < hoverIndex) {
+                row.style.borderBottom = '2px solid #7c3aed';
+                row.style.borderTop = '';
+            } else {
+                row.style.borderTop = '2px solid #7c3aed';
+                row.style.borderBottom = '';
+            }
+        }
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        const row = e.target.closest('tr');
+        if (row && row.dataset.type === draggedItemType) {
+            const items = draggedItemType === 'category' ? productsData.categories : productsData.products;
+            const draggedIndex = parseInt(draggedItem.dataset.index);
+            const dropIndex = parseInt(row.dataset.index);
+            
+            if (draggedIndex !== dropIndex) {
+                // Update order in data
+                const [movedItem] = items.splice(draggedIndex, 1);
+                items.splice(dropIndex, 0, movedItem);
+                
+                // Update order values
+                items.forEach((item, index) => {
+                    item.order = index + 1;
+                });
+                
+                // Save and reload
+                saveToLocalStorage();
+                if (draggedItemType === 'category') {
+                    loadCategories();
+                } else {
+                    loadProducts();
+                }
+            }
+        }
+    }
+
+    function handleDragEnd(e) {
+        e.target.style.opacity = '';
+        const rows = document.querySelectorAll('tr');
+        rows.forEach(row => {
+            row.style.borderTop = '';
+            row.style.borderBottom = '';
+        });
+        draggedItem = null;
+        draggedItemType = null;
+    }
 }); 
