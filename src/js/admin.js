@@ -445,6 +445,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     let draggedItemType = null;
 
     function handleDragStart(e) {
+        // Only allow dragging by the handle
         if (!e.target.closest('.handle')) {
             e.preventDefault();
             return;
@@ -454,8 +455,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         draggedItemType = draggedItem.dataset.type;
         draggedItem.classList.add('dragging');
         
+        // Required for Firefox
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/plain', '');
+
+        // Add dragging class to table for visual feedback
+        const table = draggedItem.closest('table');
+        table.classList.add('dragging-active');
     }
 
     function handleDragOver(e) {
@@ -465,12 +471,15 @@ document.addEventListener('DOMContentLoaded', async function() {
         const row = e.target.closest('tr');
         if (!row || row === draggedItem || row.dataset.type !== draggedItemType) return;
         
+        // Clear existing drag-over classes
         document.querySelectorAll('.drag-over-top, .drag-over-bottom').forEach(el => {
             el.classList.remove('drag-over-top', 'drag-over-bottom');
         });
         
         const rect = row.getBoundingClientRect();
         const midpoint = rect.top + rect.height / 2;
+        
+        // Add visual indicator
         if (e.clientY < midpoint) {
             row.classList.add('drag-over-top');
         } else {
@@ -480,6 +489,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     function handleDrop(e) {
         e.preventDefault();
+        
         const row = e.target.closest('tr');
         if (!row || row === draggedItem || row.dataset.type !== draggedItemType) return;
         
@@ -492,20 +502,27 @@ document.addEventListener('DOMContentLoaded', async function() {
             const midpoint = rect.top + rect.height / 2;
             const dropAfter = e.clientY > midpoint;
             
+            // Remove the dragged item from its original position
             const [movedItem] = items.splice(draggedIndex, 1);
             
-            const newIndex = dropAfter ? 
-                (dropIndex > draggedIndex ? dropIndex : dropIndex + 1) : 
-                (dropIndex < draggedIndex ? dropIndex : dropIndex - 1);
+            // Calculate new position
+            let newIndex;
+            if (dropAfter) {
+                newIndex = dropIndex > draggedIndex ? dropIndex : dropIndex + 1;
+            } else {
+                newIndex = dropIndex < draggedIndex ? dropIndex : dropIndex - 1;
+            }
             
+            // Insert at new position
             items.splice(newIndex, 0, movedItem);
             
+            // Update order values
             items.forEach((item, index) => {
                 item.order = index + 1;
             });
             
+            // Save changes and reload
             saveToLocalStorage();
-            
             if (draggedItemType === 'category') {
                 loadCategories();
             } else {
@@ -517,8 +534,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     function handleDragEnd(e) {
         if (draggedItem) {
             draggedItem.classList.remove('dragging');
+            
+            // Remove dragging class from table
+            const table = draggedItem.closest('table');
+            table.classList.remove('dragging-active');
         }
         
+        // Clear all drag-over classes
         document.querySelectorAll('.drag-over-top, .drag-over-bottom').forEach(el => {
             el.classList.remove('drag-over-top', 'drag-over-bottom');
         });
