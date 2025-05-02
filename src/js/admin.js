@@ -163,12 +163,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     githubPushBtn.style.marginLeft = '1rem';
     githubPushBtn.onclick = async function() {
         try {
-            // Get token from environment variable
-            const token = process.env.GITHUB_TOKEN;
+            // Get token from Vercel environment variable
+            const token = process.env.NEXT_PUBLIC_GITHUB_TOKEN;
             console.log('Token available:', !!token); // Debug log
             
             if (!token) {
-                alert('Token não encontrado. Verifique se a variável de ambiente GITHUB_TOKEN está configurada corretamente.');
+                alert('Token não encontrado. Verifique se a variável de ambiente NEXT_PUBLIC_GITHUB_TOKEN está configurada corretamente no Vercel.');
                 return;
             }
 
