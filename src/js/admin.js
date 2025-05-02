@@ -182,16 +182,16 @@ document.addEventListener('DOMContentLoaded', async function() {
                 alert('Operação cancelada: Token não fornecido');
                 return;
             }
-
+            
             // Show loading state
             githubPushBtn.disabled = true;
             githubPushBtn.innerHTML = '<i class="ti ti-loader"></i> Enviando...';
-
+            
             // Prepare the data
             const jsonData = JSON.stringify(productsData, null, 2);
-            const base64Content = btoa(jsonData);
+            const base64Content = btoa(unescape(encodeURIComponent(jsonData)));
             
-            console.log('Iniciando push para GitHub...'); // Debug log
+            console.log('Iniciando push para GitHub...');
             
             // Get current file SHA (needed for update)
             const getFileResponse = await fetch('https://api.github.com/repos/Tazmania2/Superloot/contents/src/data/products.json', {
@@ -200,16 +200,16 @@ document.addEventListener('DOMContentLoaded', async function() {
                     'Accept': 'application/vnd.github.v3+json'
                 }
             });
-
+            
             let sha;
             if (getFileResponse.ok) {
                 const fileData = await getFileResponse.json();
                 sha = fileData.sha;
-                console.log('SHA obtido com sucesso:', sha); // Debug log
+                console.log('SHA obtido com sucesso:', sha);
             } else {
-                console.error('Erro ao obter SHA:', await getFileResponse.text()); // Debug log
+                console.error('Erro ao obter SHA:', await getFileResponse.text());
             }
-
+            
             // Push to GitHub
             const response = await fetch('https://api.github.com/repos/Tazmania2/Superloot/contents/src/data/products.json', {
                 method: 'PUT',
@@ -221,18 +221,17 @@ document.addEventListener('DOMContentLoaded', async function() {
                 body: JSON.stringify({
                     message: 'Atualização automática do products.json',
                     content: base64Content,
-                    sha: sha // Will be undefined for new files
+                    sha: sha
                 })
             });
-
+            
             if (response.ok) {
-                console.log('Push realizado com sucesso!'); // Debug log
+                console.log('Push realizado com sucesso!');
                 alert('Arquivo atualizado com sucesso no GitHub!');
-                // Force reload the page to get fresh data
                 window.location.reload();
             } else {
                 const error = await response.json();
-                console.error('Erro no push:', error); // Debug log
+                console.error('Erro no push:', error);
                 throw new Error(error.message || 'Erro ao enviar para o GitHub');
             }
         } catch (error) {
@@ -253,7 +252,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${category.name}</td>
-                <td><img src="${category.icon}" alt="${category.name}" style="width: 24px; height: 24px;"></td>
+                <td><img src="${category.icon}" alt="${category.name}" style="width: 24px; height: 24px; object-fit: contain;"></td>
                 <td>${category.order}</td>
                 <td>
                     <div class="action-buttons">
@@ -279,7 +278,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             row.innerHTML = `
                 <td>${product.name}</td>
                 <td>${category ? category.name : 'N/A'}</td>
-                <td>R$ ${product.price}</td>
+                <td>R$ ${parseFloat(product.price).toFixed(2)}</td>
                 <td>${product.order}</td>
                 <td>
                     <div class="action-buttons">
@@ -440,7 +439,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-
+            
             // Show success message
             alert('Arquivo JSON gerado com sucesso! Faça o upload do arquivo para o servidor para aplicar as alterações.');
         } catch (error) {
