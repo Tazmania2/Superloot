@@ -163,12 +163,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     githubPushBtn.style.marginLeft = '1rem';
     githubPushBtn.onclick = async function() {
         try {
-            // Get token from window object
-            const token = window.GITHUB_TOKEN;
-            console.log('Token available:', !!token); // Debug log
-            
+            // Prompt for GitHub token
+            const token = prompt('Por favor, insira seu token de acesso do GitHub:');
             if (!token) {
-                alert('Token não encontrado. Verifique se o token está configurado corretamente.');
+                alert('Operação cancelada: Token não fornecido');
                 return;
             }
 
