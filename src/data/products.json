@@ -4,23 +4,37 @@
       "id": "poe2",
       "name": "Path of Exile 2",
       "icon": "https://i.ibb.co/FbhQqJsG/dane-brennand-dane-brennand-logo-artstation-removebg-preview.png",
-      "description": "Compre currencies e itens para Path of Exile 2"
-    },
-    {
-      "id": "dofus",
-      "name": "Dofus",
-      "icon": "https://i.ibb.co/CpqtRmvh/1087692.png",
-      "description": "Compre currencies e itens para Dofus"
+      "description": "Compre currencies e itens para Path of Exile 2",
+      "order": 1
     },
     {
       "id": "rola",
       "name": "Ragnarok LatAm",
       "icon": "https://i.ibb.co/YBPTdJwC/Ragnarok-Online-Latam-artwork-1024x576-jpg-removebg-preview.png",
       "description": "Ragnarok Online Latin America",
-      "order": 4
+      "order": 2
+    },
+    {
+      "id": "dofus",
+      "name": "Dofus",
+      "icon": "https://i.ibb.co/CpqtRmvh/1087692.png",
+      "description": "Compre currencies e itens para Dofus",
+      "order": 3
     }
   ],
   "products": [
+    {
+      "id": "zenylatam",
+      "name": "Zeny",
+      "category": "rola",
+      "price": 125,
+      "image": "https://i.ibb.co/nMnBRrpY/item-5033-removebg-preview.png",
+      "description": "1kk de zeny\n1.000.000,00 Zeny em Ragnarok LATAM",
+      "buyLink": "https://wa.me/5511997387181?text=Quero%20comprar%1kk%20de%20Zeny",
+      "discordLink": "https://discord.gg/uw7BbzMwHc",
+      "highlight": true,
+      "order": 1
+    },
     {
       "id": "divine-orb",
       "name": "Divine Orb",
@@ -30,7 +44,8 @@
       "description": "Re-roll os valores num�ricos de um item raro",
       "buyLink": "https://wa.me/5511997387181?text=Quero%20comprar%20Divine%20Orb",
       "highlight": true,
-      "discordLink": "https://discord.gg/uw7BbzMwHc"
+      "discordLink": "https://discord.gg/uw7BbzMwHc",
+      "order": 2
     },
     {
       "id": "exalted-orb",
@@ -41,18 +56,8 @@
       "description": "Adiciona um novo mod aleat�rio a um item raro",
       "buyLink": "https://wa.me/5511997387181?text=Quero%20comprar%20Exalted%20Orb",
       "highlight": true,
-      "discordLink": "https://discord.gg/uw7BbzMwHc"
-    },
-    {
-      "id": "zenylatam",
-      "name": "Zeny",
-      "category": "rola",
-      "price": 125,
-      "image": "https://i.ibb.co/nMnBRrpY/item-5033-removebg-preview.png",
-      "description": "1kk de zeny\n1.000.000,00 Zeny em Ragnarok LATAM",
-      "buyLink": "https://wa.me/5511997387181?text=Quero%20comprar%1kk%20de%20Zeny",
       "discordLink": "https://discord.gg/uw7BbzMwHc",
-      "highlight": true
+      "order": 3
     },
     {
       "id": "kamas",
@@ -63,7 +68,8 @@
       "description": "1kk Kamas\n1.000.000,00 Kamas em Dofus",
       "buyLink": "https://wa.me/5511997387181?text=Quero%20comprar%1kk%20de%20Zeny",
       "discordLink": "https://discord.gg/uw7BbzMwHc",
-      "highlight": true
+      "highlight": true,
+      "order": 4
     }
   ]
 }
