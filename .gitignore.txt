@@ -1,0 +1,3 @@
+/node modules
+superloot-v2-frontend\node modules
+superloot-v2-frontend/node_modules
