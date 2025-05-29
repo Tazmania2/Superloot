@@ -18,8 +18,15 @@
       "id": "dofus",
       "name": "Dofus",
       "icon": "https://i.ibb.co/CpqtRmvh/1087692.png",
-      "description": "Compre currencies e itens para Dofus",
-      "order": 3
+      "description": "Compre currencies e itens para Dofus - MonoConta",
+      "order": 5
+    },
+    {
+      "id": "wakfu",
+      "name": "Wakfu",
+      "icon": "https://upload.wikimedia.org/wikipedia/pt/3/3d/Wakfu_logo.png?20141003023707",
+      "description": "Items Wakfu",
+      "order": 5
     }
   ],
   "products": [
@@ -63,13 +70,25 @@
       "id": "kamas",
       "name": "Kamas",
       "category": "dofus",
-      "price": "125",
+      "price": "9.99",
       "image": "https://i.ibb.co/nsys1Yqt/Kamas.png",
       "description": "1kk Kamas\n1.000.000,00 Kamas em Dofus",
       "buyLink": "https://wa.me/558496387456?text=Quero%20comprar%1kk%20de%20Zeny",
       "discordLink": "https://discord.gg/uw7BbzMwHc",
       "highlight": true,
-      "order": 5
+      "order": 6
+    },
+    {
+      "id": "kamas-wakfu",
+      "name": "Kamas - Wakfu",
+      "category": "wakfu",
+      "price": "22",
+      "image": "https://i.ibb.co/nsys1Yqt/Kamas.png",
+      "description": "1kk Kamas\n1.000.000,00 Kamas em Dofus",
+      "buyLink": "https://wa.me/558496387456?text=Quero%20comprar%1kk%20de%20Zeny",
+      "discordLink": "https://discord.gg/uw7BbzMwHc",
+      "highlight": false,
+      "order": 6
     }
   ]
 }
