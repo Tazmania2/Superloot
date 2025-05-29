@@ -27,13 +27,13 @@
       "id": "zenylatam",
       "name": "Zeny",
       "category": "rola",
-      "price": 125,
+      "price": "29.99",
       "image": "https://i.ibb.co/nMnBRrpY/item-5033-removebg-preview.png",
-      "description": "1kk de zeny\n1.000.000,00 Zeny em Ragnarok LATAM",
+      "description": "1kk de zeny\n1.000.000,00 Zeny em Ragnarok LATAM - All Servers",
       "buyLink": "https://wa.me/5511997387181?text=Quero%20comprar%1kk%20de%20Zeny",
       "discordLink": "https://discord.gg/uw7BbzMwHc",
       "highlight": true,
-      "order": 1
+      "order": 5
     },
     {
       "id": "divine-orb",
@@ -63,13 +63,13 @@
       "id": "kamas",
       "name": "Kamas",
       "category": "dofus",
-      "price": 125,
+      "price": "125",
       "image": "https://i.ibb.co/nsys1Yqt/Kamas.png",
       "description": "1kk Kamas\n1.000.000,00 Kamas em Dofus",
-      "buyLink": "https://wa.me/5511997387181?text=Quero%20comprar%1kk%20de%20Zeny",
+      "buyLink": "https://wa.me/558496387456?text=Quero%20comprar%1kk%20de%20Zeny",
       "discordLink": "https://discord.gg/uw7BbzMwHc",
       "highlight": true,
-      "order": 4
+      "order": 5
     }
   ]
 }
