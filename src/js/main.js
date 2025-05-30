@@ -1,5 +1,5 @@
 // Products data
-let productsData = {
+window.productsData = {
     categories: [],
     products: []
 };
@@ -16,12 +16,12 @@ async function loadProductsData() {
         
         // Validate the JSON structure
         if (jsonData.categories && jsonData.products) {
-            productsData = jsonData;
+            window.productsData = jsonData;
             console.log('Products data loaded successfully from JSON file');
             
             // Save to localStorage for offline use
             try {
-                localStorage.setItem('superLootData', JSON.stringify(productsData));
+                localStorage.setItem('superLootData', JSON.stringify(window.productsData));
             } catch (e) {
                 console.error('Error saving to localStorage:', e);
             }
@@ -41,7 +41,7 @@ async function loadProductsData() {
             try {
                 const parsedData = JSON.parse(localData);
                 if (parsedData.categories && parsedData.products) {
-                    productsData = parsedData;
+                    window.productsData = parsedData;
                     console.log('Loaded data from localStorage as fallback');
                     createNavigation();
                     initializePage();
@@ -74,7 +74,7 @@ function createNavigation() {
     navContainer.appendChild(homeLink);
 
     // Add category links
-    productsData.categories.forEach(category => {
+    window.productsData.categories.forEach(category => {
         const categoryLink = document.createElement('a');
         categoryLink.href = `category.html?category=${category.id}`;
         categoryLink.className = 'nav-item';
@@ -127,7 +127,7 @@ function initializePage() {
         featuredItemsContainer.innerHTML = '';
 
         // Get highlighted products (up to 4)
-        const highlightedProducts = productsData.products
+        const highlightedProducts = window.productsData.products
             .filter(product => product.highlight)
             .slice(0, 4);
         
@@ -136,7 +136,7 @@ function initializePage() {
         // If we have less than 4 highlighted products, fill with non-highlighted ones
         if (highlightedProducts.length < 4) {
             const remainingSlots = 4 - highlightedProducts.length;
-            const nonHighlightedProducts = productsData.products
+            const nonHighlightedProducts = window.productsData.products
                 .filter(product => !product.highlight)
                 .slice(0, remainingSlots);
             highlightedProducts.push(...nonHighlightedProducts);

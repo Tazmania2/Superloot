@@ -10,7 +10,7 @@ function initializeCategoryPage() {
     }
 
     // Get category info
-    const category = productsData.categories.find(cat => cat.id === categoryId);
+    const category = window.productsData.categories.find(cat => cat.id === categoryId);
     if (!category) {
         window.location.href = 'index.html';
         return;
@@ -25,7 +25,7 @@ function initializeCategoryPage() {
     `;
 
     // Get products for this category
-    const categoryProducts = productsData.products.filter(product => product.category === categoryId);
+    const categoryProducts = window.productsData.products.filter(product => product.category === categoryId);
 
     // Render products
     const productsContainer = document.getElementById('products-container');
@@ -71,7 +71,7 @@ function initializeCategoryPage() {
 // Wait for data to be loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Check if data is already loaded
-    if (productsData.categories.length > 0) {
+    if (window.productsData && window.productsData.categories && window.productsData.categories.length > 0 && window.productsData.products && window.productsData.products.length > 0) {
         initializeCategoryPage();
     } else {
         // Create a loading indicator
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Wait for data to be loaded
         const checkData = setInterval(() => {
-            if (productsData.categories.length > 0) {
+            if (window.productsData && window.productsData.categories && window.productsData.categories.length > 0 && window.productsData.products && window.productsData.products.length > 0) {
                 clearInterval(checkData);
                 initializeCategoryPage();
             }
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Timeout after 5 seconds
         setTimeout(() => {
             clearInterval(checkData);
-            if (productsData.categories.length === 0) {
+            if (!window.productsData || !window.productsData.categories || window.productsData.categories.length === 0) {
                 window.location.href = 'index.html';
             }
         }, 5000);
