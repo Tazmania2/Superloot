@@ -51,7 +51,7 @@ function initializeCategoryPage() {
             <div class="product-info">
                 <h3>${product.name}</h3>
                 <p>${product.description}</p>
-                <p class="product-price">R$ ${product.price.toFixed(2)}</p>
+                <p class="product-price">R$ ${Number(product.price).toFixed(2)}</p>
                 <div class="product-actions">
                     <a href="${product.buyLink}" class="product-link" target="_blank">
                         <i class="ti ti-brand-whatsapp"></i>
